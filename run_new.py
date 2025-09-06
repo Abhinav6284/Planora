@@ -5,14 +5,18 @@ from flask import Flask, render_template
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__,
-            static_folder=os.path.join(basedir, 'static/'),
-            template_folder=os.path.join(basedir, 'templates/'))
+            static_folder=os.path.join(basedir, './static/'),
+            template_folder=os.path.join(basedir, './templates/'))
+
 
 @app.route('/')
 def home():
     """Renders the main landing page."""
     return render_template('landing.html')
 
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
 
 @app.route('/test')
 def test():
@@ -39,4 +43,3 @@ if __name__ == '__main__':
 
     # Run the app
     app.run(debug=True, port=5001)
-
