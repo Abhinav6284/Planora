@@ -1,38 +1,8 @@
-// ========================================
-// PLANORA - ENHANCED DYNAMIC JAVASCRIPT
-// Professional Interactive Functionality
-// ========================================
-
+// Modern JavaScript for Planora App
 class PlanoraApp {
     constructor() {
         this.isScrolling = false;
         this.animatedElements = new Set();
-        this.statsData = [
-            { label: 'Active Users', value: 12500, suffix: '+', icon: '👥' },
-            { label: 'Tasks Completed', value: 89432, suffix: '', icon: '✅' },
-            { label: 'Projects Managed', value: 3245, suffix: '+', icon: '📊' },
-            { label: 'Teams Onboarded', value: 456, suffix: '+', icon: '🏢' }
-        ];
-        this.featuresData = [
-            {
-                title: 'AI-Powered Prioritization',
-                description: 'Our intelligent engine analyzes your tasks and suggests the most optimal path to completion.',
-                icon: '🤖',
-                gradient: 'linear-gradient(135deg, #00d4ff, #7c3aed)'
-            },
-            {
-                title: 'End-to-End Encryption',
-                description: 'Your data is protected with military-grade encryption, ensuring complete privacy.',
-                icon: '🔒',
-                gradient: 'linear-gradient(135deg, #7c3aed, #f59e0b)'
-            },
-            {
-                title: 'Seamless Integration',
-                description: 'Connect with your favorite tools through our robust API for limitless customization.',
-                icon: '🔗',
-                gradient: 'linear-gradient(135deg, #f59e0b, #00d4ff)'
-            }
-        ];
         this.init();
     }
 
@@ -42,10 +12,10 @@ class PlanoraApp {
 
     init() {
         this.setupEventListeners();
-        this.generateDynamicContent();
         this.setupAnimations();
-        this.setupAccessibility();
-        this.setupPerformanceOptimizations();
+        this.setupSmoothScrolling();
+        this.setupFormValidation();
+        this.setupMobileMenu();
         console.log('🚀 Planora App Initialized');
     }
 
@@ -61,14 +31,12 @@ class PlanoraApp {
             mobileToggle.addEventListener('click', () => this.toggleMobileMenu());
         }
 
-        // Smooth scroll navigation
-        this.setupSmoothScrolling();
-
-        // Button click tracking
-        this.setupButtonTracking();
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+        // Button click tracking with ripple effect
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.createRippleEffect(e, btn);
+            });
+        });
 
         // Window resize handler
         window.addEventListener('resize', this.debounce(() => {
@@ -77,100 +45,126 @@ class PlanoraApp {
     }
 
     // ========================================
-    // DYNAMIC CONTENT GENERATION
+    // SMOOTH SCROLLING
     // ========================================
 
-    generateDynamicContent() {
-        this.generateStats();
-        this.generateFeatures();
-        this.generateProgressIndicators();
-    }
-
-    generateStats() {
-        const statsContainer = document.querySelector('.hero-stats');
-        if (!statsContainer) return;
-
-        statsContainer.innerHTML = '';
-
-        this.statsData.forEach((stat, index) => {
-            const statElement = this.createElement('div', {
-                className: 'stat fade-in',
-                'data-delay': index * 0.1
+    setupSmoothScrolling() {
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
-
-            const iconElement = this.createElement('div', {
-                className: 'stat-icon'
-            }, stat.icon);
-
-            const numberElement = this.createElement('span', {
-                className: 'stat-number',
-                'data-target': stat.value,
-                'data-suffix': stat.suffix
-            }, '0');
-
-            const labelElement = this.createElement('span', {
-                className: 'stat-label'
-            }, stat.label);
-
-            // Add progress bar
-            const progressElement = this.createElement('div', {
-                className: 'stat-progress'
-            });
-            const progressBar = this.createElement('div', {
-                className: 'stat-progress-bar',
-                'data-width': Math.min((stat.value / 100000) * 100, 100)
-            });
-            progressElement.appendChild(progressBar);
-
-            statElement.appendChild(iconElement);
-            statElement.appendChild(numberElement);
-            statElement.appendChild(labelElement);
-            statElement.appendChild(progressElement);
-
-            statsContainer.appendChild(statElement);
         });
     }
 
-    generateFeatures() {
-        const featuresGrid = document.querySelector('.features-grid');
-        if (!featuresGrid) return;
+    // ========================================
+    // FORM VALIDATION
+    // ========================================
 
-        // Keep existing content and enhance it
-        const existingCards = featuresGrid.querySelectorAll('.feature-card');
-        existingCards.forEach((card, index) => {
-            if (this.featuresData[index]) {
-                this.enhanceFeatureCard(card, this.featuresData[index], index);
+    setupFormValidation() {
+        // Real-time form validation
+        const emailInputs = document.querySelectorAll('input[type="email"]');
+        const passwordInputs = document.querySelectorAll('input[type="password"]');
+
+        emailInputs.forEach(input => {
+            input.addEventListener('blur', this.validateEmail);
+            input.addEventListener('input', this.clearValidationErrors);
+        });
+
+        passwordInputs.forEach(input => {
+            input.addEventListener('blur', this.validatePassword);
+            input.addEventListener('input', this.clearValidationErrors);
+        });
+
+        // Form submission validation
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', (e) => {
+                if (!this.validateForm(form)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    }
+
+    validateEmail(e) {
+        const email = e.target.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValid = emailRegex.test(email);
+        
+        if (email && !isValid) {
+            e.target.style.borderColor = '#ef4444';
+            PlanoraApp.showFieldError(e.target, 'Please enter a valid email address');
+        } else {
+            e.target.style.borderColor = 'var(--glass-border)';
+            PlanoraApp.clearFieldError(e.target);
+        }
+    }
+
+    validatePassword(e) {
+        const password = e.target.value;
+        const isValid = password.length >= 6;
+        
+        if (password && !isValid) {
+            e.target.style.borderColor = '#ef4444';
+            PlanoraApp.showFieldError(e.target, 'Password must be at least 6 characters');
+        } else {
+            e.target.style.borderColor = 'var(--glass-border)';
+            PlanoraApp.clearFieldError(e.target);
+        }
+    }
+
+    clearValidationErrors(e) {
+        e.target.style.borderColor = 'var(--glass-border)';
+        PlanoraApp.clearFieldError(e.target);
+    }
+
+    validateForm(form) {
+        let isValid = true;
+        const requiredFields = form.querySelectorAll('[required]');
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.style.borderColor = '#ef4444';
+                PlanoraApp.showFieldError(field, 'This field is required');
+                isValid = false;
             }
         });
-    }
 
-    enhanceFeatureCard(card, data, index) {
-        card.classList.add('fade-in');
-        card.setAttribute('data-delay', index * 0.2);
-
-        const icon = card.querySelector('.feature-icon');
-        if (icon) {
-            icon.style.background = data.gradient;
-            icon.innerHTML = data.icon;
+        // Password confirmation check
+        const password = form.querySelector('input[name="password"]');
+        const confirmPassword = form.querySelector('input[name="confirm-password"]');
+        
+        if (password && confirmPassword && password.value !== confirmPassword.value) {
+            confirmPassword.style.borderColor = '#ef4444';
+            PlanoraApp.showFieldError(confirmPassword, 'Passwords do not match');
+            isValid = false;
         }
 
-        // Add hover effects
-        card.addEventListener('mouseenter', () => {
-            this.animateCardHover(card, true);
-        });
-
-        card.addEventListener('mouseleave', () => {
-            this.animateCardHover(card, false);
-        });
+        return isValid;
     }
 
-    generateProgressIndicators() {
-        // Create scroll progress indicator
-        const progressBar = this.createElement('div', {
-            className: 'scroll-progress',
-            id: 'scroll-progress'
-        });
-        document.body.appendChild(progressBar);
+    static showFieldError(field, message) {
+        PlanoraApp.clearFieldError(field);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
+        errorDiv.textContent = message;
+        field.parentNode.appendChild(errorDiv);
+    }
+
+    static clearFieldError(field) {
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
     }
 
     // ========================================
@@ -179,17 +173,11 @@ class PlanoraApp {
 
     setupAnimations() {
         this.setupIntersectionObserver();
-        this.setupParallaxEffects();
-        this.setupLoadingAnimations();
+        this.setupPricingCardAnimations();
+        this.setupFormTransitions();
     }
 
     setupIntersectionObserver() {
-        const observerOptions = {
-            root: null,
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !this.animatedElements.has(entry.target)) {
@@ -197,276 +185,115 @@ class PlanoraApp {
                     this.animatedElements.add(entry.target);
                 }
             });
-        }, observerOptions);
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
 
-        // Observe all animatable elements
-        const elements = document.querySelectorAll('.fade-in, .hero-stats, .glass-card, .feature-card');
-        elements.forEach(el => observer.observe(el));
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .pricing-card, .glass-card, .dashboard-card').forEach(el => {
+            observer.observe(el);
+        });
     }
 
     animateElement(element) {
-        const delay = parseFloat(element.getAttribute('data-delay')) || 0;
-
-        setTimeout(() => {
-            element.classList.add('visible');
-
-            // Special animations for specific elements
-            if (element.classList.contains('hero-stats')) {
-                this.animateCounters();
-                this.animateProgressBars();
-            }
-
-            if (element.classList.contains('glass-card')) {
-                this.animateGlassCard(element);
-            }
-        }, delay * 1000);
-    }
-
-    animateCounters() {
-        const counters = document.querySelectorAll('.stat-number');
-
-        counters.forEach(counter => {
-            const target = parseInt(counter.getAttribute('data-target'));
-            const suffix = counter.getAttribute('data-suffix') || '';
-            const duration = 2000; // 2 seconds
-            const frameDuration = 1000 / 60; // 60fps
-            const totalFrames = Math.round(duration / frameDuration);
-            let frame = 0;
-
-            const timer = setInterval(() => {
-                frame++;
-                const progress = this.easeOutQuart(frame / totalFrames);
-                const currentValue = Math.round(target * progress);
-
-                counter.textContent = this.formatNumber(currentValue) + suffix;
-
-                if (frame === totalFrames) {
-                    clearInterval(timer);
-                }
-            }, frameDuration);
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(30px)';
+        element.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        
+        // Trigger animation
+        requestAnimationFrame(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
         });
     }
 
-    animateProgressBars() {
-        const progressBars = document.querySelectorAll('.stat-progress-bar');
-
-        progressBars.forEach((bar, index) => {
-            const targetWidth = parseFloat(bar.getAttribute('data-width'));
-
-            setTimeout(() => {
-                bar.style.width = targetWidth + '%';
-                bar.style.transition = 'width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            }, index * 200);
-        });
-    }
-
-    animateGlassCard(card) {
-        card.style.transform = 'translateY(0) scale(1)';
-        card.style.opacity = '1';
-
-        // Add shimmer effect
-        const shimmer = this.createElement('div', {
-            className: 'card-shimmer'
-        });
-        card.appendChild(shimmer);
-
-        setTimeout(() => {
-            shimmer.remove();
-        }, 1000);
-    }
-
-    animateCardHover(card, isHover) {
-        if (isHover) {
-            card.style.transform = 'translateY(-12px) scale(1.02)';
-            card.style.boxShadow = '0 20px 40px rgba(0, 212, 255, 0.3)';
-        } else {
-            card.style.transform = 'translateY(0) scale(1)';
-            card.style.boxShadow = '';
-        }
-    }
-
-    setupParallaxEffects() {
-        const parallaxElements = document.querySelectorAll('[data-parallax]');
-
-        window.addEventListener('scroll', this.throttle(() => {
-            const scrolled = window.pageYOffset;
-
-            parallaxElements.forEach(element => {
-                const rate = parseFloat(element.getAttribute('data-parallax')) || 0.5;
-                const yPos = -(scrolled * rate);
-                element.style.transform = `translateY(${yPos}px)`;
+    setupPricingCardAnimations() {
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = card.classList.contains('featured') 
+                    ? 'scale(1.05) translateY(-10px)' 
+                    : 'translateY(-10px)';
+                card.style.boxShadow = 'var(--glass-shadow)';
             });
-        }, 16));
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = card.classList.contains('featured') 
+                    ? 'scale(1.05)' 
+                    : 'translateY(0)';
+                card.style.boxShadow = '';
+            });
+        });
     }
 
-    setupLoadingAnimations() {
-        // Stagger hero text animations
-        const heroElements = document.querySelectorAll('.hero-subtitle, .hero-title, .hero-description, .hero-cta');
-
-        heroElements.forEach((element, index) => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(30px)';
-
+    setupFormTransitions() {
+        const authForms = document.querySelectorAll('.auth-form');
+        authForms.forEach(form => {
+            form.style.opacity = '0';
+            form.style.transform = 'translateY(20px)';
+            form.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Animate in
             setTimeout(() => {
-                element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }, (index + 1) * 200);
+                form.style.opacity = '1';
+                form.style.transform = 'translateY(0)';
+            }, 100);
         });
     }
 
     // ========================================
-    // NAVIGATION & INTERACTION
+    // MOBILE MENU
     // ========================================
 
-    handleScroll() {
-        const header = document.getElementById('header');
-        const scrollProgress = document.getElementById('scroll-progress');
-
-        // Header scroll effect
-        if (header) {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        }
-
-        // Update scroll progress
-        if (scrollProgress) {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            scrollProgress.style.width = scrolled + '%';
-        }
+    setupMobileMenu() {
+        this.mobileMenuOpen = false;
     }
 
     toggleMobileMenu() {
-        const toggle = document.getElementById('mobile-toggle');
-        const menu = document.getElementById('nav-links');
-
-        if (!toggle || !menu) return;
-
-        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-
-        toggle.setAttribute('aria-expanded', !isExpanded);
-        menu.classList.toggle('active');
-
-        // Add body class to prevent scrolling
-        document.body.classList.toggle('menu-open');
-
-        // Focus management
-        if (!isExpanded) {
-            menu.querySelector('a')?.focus();
+        const navLinks = document.getElementById('nav-links');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        
+        this.mobileMenuOpen = !this.mobileMenuOpen;
+        
+        if (this.mobileMenuOpen) {
+            navLinks.classList.add('active');
+            document.body.classList.add('menu-open');
+            mobileToggle.classList.add('active');
+        } else {
+            navLinks.classList.remove('active');
+            document.body.classList.remove('menu-open');
+            mobileToggle.classList.remove('active');
         }
     }
 
-    setupSmoothScrolling() {
-        const navLinks = document.querySelectorAll('a[href^="#"]');
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-
-                const targetId = link.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-
-                if (targetElement) {
-                    const headerHeight = document.getElementById('header')?.offsetHeight || 0;
-                    const targetPosition = targetElement.offsetTop - headerHeight;
-
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-
-                    // Close mobile menu if open
-                    const menu = document.getElementById('nav-links');
-                    if (menu?.classList.contains('active')) {
-                        this.toggleMobileMenu();
-                    }
-                }
-            });
-        });
-    }
-
-    setupButtonTracking() {
-        const buttons = document.querySelectorAll('.btn');
-
-        buttons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                // Add click ripple effect
-                this.createRippleEffect(e, button);
-
-                // Analytics tracking
-                this.trackEvent('button_click', {
-                    button_text: button.textContent.trim(),
-                    button_class: button.className,
-                    page_section: this.getPageSection(button)
-                });
-            });
-        });
-    }
-
     // ========================================
-    // ACCESSIBILITY
+    // SCROLL EFFECTS
     // ========================================
 
-    setupAccessibility() {
-        // Keyboard navigation
-        this.setupKeyboardNavigation();
-
-        // Screen reader announcements
-        this.setupScreenReaderSupport();
-
-        // Focus management
-        this.setupFocusManagement();
-    }
-
-    setupKeyboardNavigation() {
-        // Tab through interactive elements
-        const focusableElements = document.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-
-        focusableElements.forEach(element => {
-            element.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    if (element.tagName === 'BUTTON' || element.hasAttribute('role')) {
-                        e.preventDefault();
-                        element.click();
-                    }
-                }
-            });
-        });
-    }
-
-    setupScreenReaderSupport() {
-        // Add live region for dynamic content updates
-        const liveRegion = this.createElement('div', {
-            'aria-live': 'polite',
-            'aria-atomic': 'true',
-            className: 'sr-only'
-        });
-        document.body.appendChild(liveRegion);
-
-        this.liveRegion = liveRegion;
-    }
-
-    setupFocusManagement() {
-        // Return focus to trigger element when modals close
-        document.addEventListener('focusin', (e) => {
-            this.lastFocusedElement = e.target;
-        });
-    }
-
-    handleKeydown(e) {
-        // Escape key handling
-        if (e.key === 'Escape') {
-            const menu = document.getElementById('nav-links');
-            if (menu?.classList.contains('active')) {
-                this.toggleMobileMenu();
+    handleScroll() {
+        const scrollY = window.scrollY;
+        const header = document.getElementById('header');
+        
+        if (header) {
+            if (scrollY > 100) {
+                header.style.background = 'rgba(10, 11, 30, 0.95)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(10, 11, 30, 0.8)';
+                header.style.boxShadow = 'none';
             }
+        }
+
+        // Update scroll progress indicator
+        this.updateScrollProgress();
+    }
+
+    updateScrollProgress() {
+        const scrollProgress = document.getElementById('scroll-progress');
+        if (scrollProgress) {
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / scrollHeight) * 100;
+            scrollProgress.style.width = `${scrolled}%`;
         }
     }
 
@@ -474,76 +301,38 @@ class PlanoraApp {
     // UTILITY FUNCTIONS
     // ========================================
 
-    createElement(tag, attributes = {}, textContent = null) {
-        const element = document.createElement(tag);
-
-        Object.entries(attributes).forEach(([key, value]) => {
-            if (key.startsWith('data-') || key.startsWith('aria-')) {
-                element.setAttribute(key, value);
-            } else if (key === 'className') {
-                element.className = value;
-            } else {
-                element[key] = value;
-            }
-        });
-
-        if (textContent) {
-            element.textContent = textContent;
-        }
-
-        return element;
-    }
-
-    formatNumber(num) {
-        if (num >= 1000000) {
-            return (num / 1000000).toFixed(1) + 'M';
-        } else if (num >= 1000) {
-            return (num / 1000).toFixed(1) + 'K';
-        }
-        return num.toString();
-    }
-
     createRippleEffect(event, element) {
-        const ripple = this.createElement('span', {
-            className: 'ripple'
-        });
-
+        const ripple = document.createElement('span');
         const rect = element.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
         const x = event.clientX - rect.left - size / 2;
         const y = event.clientY - rect.top - size / 2;
-
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-
+        
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        `;
+        
+        element.style.position = 'relative';
+        element.style.overflow = 'hidden';
         element.appendChild(ripple);
-
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
+        
+        setTimeout(() => ripple.remove(), 600);
     }
 
-    trackEvent(eventName, properties = {}) {
-        // Analytics integration point
-        console.log(`📊 Event: ${eventName}`, properties);
-
-        // Integrate with your analytics service here
-        // Example: gtag('event', eventName, properties);
-    }
-
-    getPageSection(element) {
-        const sections = ['hero', 'features', 'pricing', 'cta'];
-        let currentSection = 'unknown';
-
-        sections.forEach(section => {
-            const sectionElement = document.querySelector(`.${section}`);
-            if (sectionElement?.contains(element)) {
-                currentSection = section;
-            }
-        });
-
-        return currentSection;
+    handleResize() {
+        // Handle responsive changes
+        if (window.innerWidth > 768 && this.mobileMenuOpen) {
+            this.toggleMobileMenu();
+        }
     }
 
     // Performance utilities
@@ -571,59 +360,21 @@ class PlanoraApp {
             timeout = setTimeout(later, wait);
         };
     }
-
-    // Easing functions
-    easeOutQuart(t) {
-        return 1 - (--t) * t * t * t;
-    }
-
-    handleResize() {
-        // Recalculate animations and layouts on resize
-        this.animatedElements.clear();
-        this.setupIntersectionObserver();
-    }
-
-    setupPerformanceOptimizations() {
-        // Preload critical images
-        this.preloadImages();
-
-        // Setup service worker if available
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {
-                console.log('Service Worker registration failed');
-            });
-        }
-    }
-
-    preloadImages() {
-        const images = [
-            '/static/images/hero-bg.jpg',
-            '/static/images/feature-1.jpg',
-            '/static/images/feature-2.jpg'
-        ];
-
-        images.forEach(src => {
-            const link = document.createElement('link');
-            link.rel = 'preload';
-            link.as = 'image';
-            link.href = src;
-            document.head.appendChild(link);
-        });
-    }
 }
 
-// ========================================
-// INITIALIZATION
-// ========================================
-
-// Initialize the app when DOM is ready
+// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.planoraApp = new PlanoraApp();
+    new PlanoraApp();
 });
 
-// Handle page visibility changes
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        console.log('🔄 Page became visible - refreshing animations');
+// Add CSS for ripple animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
     }
-});
+`;
+document.head.appendChild(style);
