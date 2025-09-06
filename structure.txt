@@ -1,0 +1,43 @@
+planora-backend/
+├── app/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── extensions.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── task.py
+│   │   ├── category.py
+│   │   └── focus_session.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── tasks.py
+│   │   ├── users.py
+│   │   ├── categories.py
+│   │   └── analytics.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── auth_service.py
+│   │   ├── task_service.py
+│   │   └── analytics_service.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── validators.py
+│   │   ├── decorators.py
+│   │   └── helpers.py
+│   └── schemas/
+│       ├── __init__.py
+│       ├── user_schema.py
+│       ├── task_schema.py
+│       └── category_schema.py
+├── migrations/
+├── tests/
+│   ├── __init__.py
+│   ├── test_auth.py
+│   ├── test_tasks.py
+│   └── test_users.py
+├── requirements.txt
+├── run.py
+├── .env.example
+└── README.md

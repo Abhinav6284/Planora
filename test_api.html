@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planora API Tester</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .response {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #e9ecef;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .token-display {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Planora API Tester</h1>
+
+        <!-- Server Status -->
+        <div id="serverStatus" class="status">
+            <span id="statusText">Checking server status...</span>
+        </div>
+
+        <!-- User Registration -->
+        <div class="section">
+            <h2>👤 User Registration</h2>
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="regUsername" placeholder="testuser" value="testuser">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="regEmail" placeholder="test@planora.com" value="test@planora.com">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="regPassword" placeholder="planora123" value="planora123">
+            </div>
+            <div class="form-group">
+                <label>First Name:</label>
+                <input type="text" id="regFirstName" placeholder="Test" value="Test">
+            </div>
+            <div class="form-group">
+                <label>Last Name:</label>
+                <input type="text" id="regLastName" placeholder="User" value="User">
+            </div>
+            <button onclick="registerUser()">Register User</button>
+            <div id="registerResponse"></div>
+        </div>
+
+        <!-- User Login -->
+        <div class="section">
+            <h2>🔑 User Login</h2>
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="loginUsername" placeholder="testuser" value="testuser">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="loginPassword" placeholder="planora123" value="planora123">
+            </div>
+            <button onclick="loginUser()">Login User</button>
+            <div id="loginResponse"></div>
+            <div id="tokenDisplay"></div>
+        </div>
+
+        <!-- Task Management -->
+        <div class="section">
+            <h2>📋 Task Management</h2>
+            <div class="form-group">
+                <label>Task Title:</label>
+                <input type="text" id="taskTitle" placeholder="Build Planora Frontend" value="Build Planora Frontend">
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="taskDescription" placeholder="Create the web interface" rows="3">Create the web interface</textarea>
+            </div>
+            <div class="form-group">
+                <label>Priority:</label>
+                <select id="taskPriority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high" selected>High</option>
+                    <option value="urgent">Urgent</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Estimated Duration (minutes):</label>
+                <input type="number" id="taskDuration" placeholder="180" value="180">
+            </div>
+            <button onclick="createTask()">Create Task</button>
+            <button onclick="getTasks()">Get All Tasks</button>
+            <div id="taskResponse"></div>
+        </div>
+
+        <!-- Current User Info -->
+        <div class="section">
+            <h2>👋 Current User</h2>
+            <button onclick="getCurrentUser()">Get Current User Info</button>
+            <div id="userResponse"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let currentToken = '';
+
+        // Check server status on page load
+        window.onload = function() {
+            checkServerStatus();
+        };
+
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/');
+                const data = await response.json();
+
+                document.getElementById('statusText').innerText = '✅ Server Online - ' + data.message;
+                document.getElementById('serverStatus').className = 'status online';
+            } catch (error) {
+                document.getElementById('statusText').innerText = '❌ Server Offline - Make sure Flask app is running';
+                document.getElementById('serverStatus').className = 'status offline';
+            }
+        }
+
+        async function registerUser() {
+            const userData = {
+                username: document.getElementById('regUsername').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                first_name: document.getElementById('regFirstName').value,
+                last_name: document.getElementById('regLastName').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+                showResponse('registerResponse', data, response.ok);
+
+                if (response.ok && data.data && data.data.access_token) {
+                    currentToken = data.data.access_token;
+                    showToken(currentToken);
+                }
+            } catch (error) {
+                showResponse('registerResponse', {error: error.message}, false);
+            }
+        }
+
+        async function loginUser() {
+            const loginData = {
+                username: document.getElementById('loginUsername').value,
+                password: document.getElementById('loginPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+                showResponse('loginResponse', data, response.ok);
+
+                if (response.ok && data.data && data.data.access_token) {
+                    currentToken = data.data.access_token;
+                    showToken(currentToken);
+                }
+            } catch (error) {
+                showResponse('loginResponse', {error: error.message}, false);
+            }
+        }
+
+        async function createTask() {
+            if (!currentToken) {
+                showResponse('taskResponse', {error: 'Please login first to get access token'}, false);
+                return;
+            }
+
+            const taskData = {
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                priority: document.getElementById('taskPriority').value,
+                estimated_duration: parseInt(document.getElementById('taskDuration').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify(taskData)
+                });
+
+                const data = await response.json();
+                showResponse('taskResponse', data, response.ok);
+            } catch (error) {
+                showResponse('taskResponse', {error: error.message}, false);
+            }
+        }
+
+        async function getTasks() {
+            if (!currentToken) {
+                showResponse('taskResponse', {error: 'Please login first to get access token'}, false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+
+                const data = await response.json();
+                showResponse('taskResponse', data, response.ok);
+            } catch (error) {
+                showResponse('taskResponse', {error: error.message}, false);
+            }
+        }
+
+        async function getCurrentUser() {
+            if (!currentToken) {
+                showResponse('userResponse', {error: 'Please login first to get access token'}, false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+
+                const data = await response.json();
+                showResponse('userResponse', data, response.ok);
+            } catch (error) {
+                showResponse('userResponse', {error: error.message}, false);
+            }
+        }
+
+        function showResponse(elementId, data, isSuccess) {
+            const element = document.getElementById(elementId);
+            const responseDiv = document.createElement('div');
+            responseDiv.className = isSuccess ? 'success' : 'error';
+            responseDiv.innerHTML = `
+                <strong>${isSuccess ? '✅ Success' : '❌ Error'}</strong>
+                <div class="response">${JSON.stringify(data, null, 2)}</div>
+            `;
+
+            // Clear previous responses
+            element.innerHTML = '';
+            element.appendChild(responseDiv);
+        }
+
+        function showToken(token) {
+            document.getElementById('tokenDisplay').innerHTML = `
+                <div class="token-display">
+                    <strong>🔑 Access Token (saved for requests):</strong><br>
+                    ${token.substring(0, 50)}...
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
