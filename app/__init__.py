@@ -44,7 +44,7 @@ def create_app(config_name='default'):
     # Routes
     @app.route('/')
     def landing_page():
-        return render_template('index.html')
+        return render_template('landing.html')
 
     @app.route('/login')
     def login_page():

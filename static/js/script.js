@@ -114,7 +114,7 @@ function updateHeaderAuth() {
 // Logout function
 function logout() {
     localStorage.removeItem('planora_token');
-    window.location.href = 'index.html';
+    window.location.href = 'landing.html';
 }
 
 // Initialize auth state

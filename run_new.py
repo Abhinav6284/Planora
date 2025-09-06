@@ -1,39 +1,42 @@
 import sys
+import os
 from flask import Flask, render_template
 
-# ✅ Debug: Show which Python is being used
-print(f"🐍 Python executable: {sys.executable}")
-print(f"📦 Python path: {sys.path[0]}")
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Create clean Flask app
 app = Flask(__name__,
-            static_folder='static',
-            template_folder='templates')
-
+            static_folder=os.path.join(basedir, 'static/'),
+            template_folder=os.path.join(basedir, 'templates/'))
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    """Renders the main landing page."""
+    return render_template('landing.html')
 
 
 @app.route('/test')
 def test():
+    """A test route to confirm the environment is working."""
     return {
-        'message': 'Flask is working in virtual environment!',
+        'message': 'Flask is working correctly!',
         'python_executable': sys.executable,
-        'static_folder': app.static_folder,
-        'template_folder': app.template_folder
+        'static_folder_path': app.static_folder,
+        'template_folder_path': app.template_folder
     }
 
 
 if __name__ == '__main__':
-    print(f"📁 Static folder: {app.static_folder}")
-    print(f"📁 Template folder: {app.template_folder}")
+    print("--- Planora Server Starting ---")
+    print(f"📁 Base Directory: {basedir}")
+    print(f"📁 Static Folder: {app.static_folder}")
+    print(f"📁 Template Folder: {app.template_folder}")
 
-    # Debug routes
-    print("\n=== REGISTERED ROUTES ===")
+    # Debug routes to see what Flask has registered
+    print("\n=== Registered Routes ===")
     for rule in app.url_map.iter_rules():
-        print(f"{rule.endpoint:20s} {rule}")
+        print(f"{rule.endpoint:25s} {rule.methods} {rule}")
     print("=" * 40)
 
+    # Run the app
     app.run(debug=True, port=5001)
+
