@@ -25,17 +25,16 @@ class Task(db.Model):
     actual_duration = db.Column(db.Integer)  # in minutes
 
     # Task organization
-    position = db.Column(db.Integer, default=0)  # for drag-and-drop ordering
+    position = db.Column(db.Integer, default=0)
     tags = db.Column(db.Text)  # JSON string of tags
 
     # Relationships
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-    parent_task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))  # for subtasks
+    parent_task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))
 
     # Self-referential relationship for subtasks
     subtasks = db.relationship('Task', backref=db.backref('parent_task', remote_side=[id]))
-    focus_sessions = db.relationship('FocusSession', backref='task', lazy='dynamic', cascade='all, delete-orphan')
 
     @property
     def is_overdue(self):
@@ -43,14 +42,6 @@ class Task(db.Model):
         if self.due_date and self.status not in ['completed', 'cancelled']:
             return datetime.utcnow() > self.due_date
         return False
-
-    @property
-    def time_remaining(self):
-        """Get time remaining until due date"""
-        if self.due_date and not self.is_completed:
-            delta = self.due_date - datetime.utcnow()
-            return delta.total_seconds() / 3600  # hours
-        return None
 
     @property
     def is_completed(self):
@@ -62,10 +53,6 @@ class Task(db.Model):
         self.status = 'completed'
         self.completed_at = datetime.utcnow()
 
-    def mark_in_progress(self):
-        """Mark task as in progress"""
-        self.status = 'in_progress'
-
     def get_progress_percentage(self):
         """Get task progress based on subtasks"""
         if not self.subtasks:
@@ -73,12 +60,6 @@ class Task(db.Model):
 
         completed_subtasks = sum(1 for subtask in self.subtasks if subtask.is_completed)
         return (completed_subtasks / len(self.subtasks)) * 100
-
-    def get_total_focus_time(self):
-        """Get total focus time spent on this task"""
-        return self.focus_sessions.with_entities(
-            db.func.sum(FocusSession.duration)
-        ).scalar() or 0
 
     def to_dict(self, include_subtasks=False):
         """Convert task to dictionary"""
@@ -100,9 +81,7 @@ class Task(db.Model):
             'category_id': self.category_id,
             'parent_task_id': self.parent_task_id,
             'is_overdue': self.is_overdue,
-            'time_remaining': self.time_remaining,
-            'progress_percentage': self.get_progress_percentage(),
-            'total_focus_time': self.get_total_focus_time()
+            'progress_percentage': self.get_progress_percentage()
         }
 
         if include_subtasks:
@@ -112,9 +91,3 @@ class Task(db.Model):
 
     def __repr__(self):
         return f'<Task {self.title}>'
-
-
-# Auto-update updated_at timestamp
-@event.listens_for(Task, 'before_update')
-def task_updated_at(mapper, connection, target):
-    target.updated_at = datetime.utcnow()

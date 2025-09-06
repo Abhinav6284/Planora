@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timezone
+from datetime import datetime
 from ..extensions import db
 import uuid
 
@@ -20,7 +20,7 @@ class User(db.Model):
     timezone = db.Column(db.String(50), default='UTC')
 
     # User preferences
-    theme = db.Column(db.String(20), default='light')  # light, dark
+    theme = db.Column(db.String(20), default='light')
     notifications_enabled = db.Column(db.Boolean, default=True)
     email_notifications = db.Column(db.Boolean, default=True)
 
@@ -33,8 +33,6 @@ class User(db.Model):
 
     # Relationships
     tasks = db.relationship('Task', backref='user', lazy='dynamic', cascade='all, delete-orphan')
-    categories = db.relationship('Category', backref='user', lazy='dynamic', cascade='all, delete-orphan')
-    focus_sessions = db.relationship('FocusSession', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Hash and set password"""
@@ -57,10 +55,10 @@ class User(db.Model):
         return self.username
 
     def get_task_stats(self):
-        """Get user's task statistics"""
+        """Get user's task statistics - using direct queries to avoid imports"""
         total_tasks = self.tasks.count()
         completed_tasks = self.tasks.filter_by(status='completed').count()
-        pending_tasks = self.tasks.filter(Task.status.in_(['todo', 'in_progress'])).count()
+        pending_tasks = self.tasks.filter(db.text("status IN ('todo', 'in_progress')")).count()
 
         return {
             'total': total_tasks,

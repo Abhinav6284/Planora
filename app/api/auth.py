@@ -1,21 +1,20 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from werkzeug.security import check_password_hash
 from datetime import datetime
 from ..extensions import db
-from ..models.user import User
-from ..models.task import Task
 
+# Create blueprint
 bp = Blueprint('auth', __name__)
 
 
 @bp.route('/register', methods=['POST'])
 def register():
     """Register a new user"""
+    from ..models.user import User
+
     try:
         data = request.get_json()
 
-        # Validate required fields
         if not data or not all(k in data for k in ['username', 'email', 'password']):
             return jsonify({
                 'success': False,
@@ -29,13 +28,7 @@ def register():
                 'message': 'Username already exists'
             }), 400
 
-        if User.query.filter_by(email=data['email']).first():
-            return jsonify({
-                'success': False,
-                'message': 'Email already registered'
-            }), 400
-
-        # Create new user
+        # Create user
         user = User(
             username=data['username'],
             email=data['email'],
@@ -47,7 +40,6 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        # Create access token
         access_token = create_access_token(identity=str(user.id))
 
         return jsonify({
@@ -71,6 +63,8 @@ def register():
 @bp.route('/login', methods=['POST'])
 def login():
     """Login user"""
+    from ..models.user import User
+
     try:
         data = request.get_json()
 
@@ -80,7 +74,6 @@ def login():
                 'message': 'Username and password are required'
             }), 400
 
-        # Find user
         user = User.query.filter_by(username=data['username']).first()
 
         if not user or not user.check_password(data['password']):
@@ -89,10 +82,7 @@ def login():
                 'message': 'Invalid username or password'
             }), 401
 
-        # Update last login
         user.update_last_login()
-
-        # Create access token
         access_token = create_access_token(identity=str(user.id))
 
         return jsonify({
@@ -116,8 +106,10 @@ def login():
 @jwt_required()
 def get_current_user():
     """Get current user profile"""
+    from ..models.user import User
+
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         user = User.query.get(user_id)
 
         if not user:

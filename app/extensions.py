@@ -9,12 +9,12 @@ from flask_limiter.util import get_remote_address
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
+
+# Enhanced CORS configuration
 cors = CORS()
 
-# Configure Flask-Limiter with proper storage
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://",  # For development - use Redis in production
-    storage_options={}
+    storage_uri="memory://"
 )
