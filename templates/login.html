@@ -1,71 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Planora</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
-<body>
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                    <div class="flash-message {{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
 
-    <div class="auth-page">
-        <div class="container">
-            <div class="auth-form">
-                <h1>Welcome Back</h1>
-                <p>Sign in to your Planora account</p>
-                
-                <form method="POST">
+<body>
+
+    <main class="page-container">
+        <section class="image-section">
+            <div class="branding-content">
+                <header>
+                    <h1>Planora</h1>
+                    <h2>Unlock Your Potential. Plan with Precision.</h2>
+                    <p class="subheading">Your journey to productivity starts here.</p>
+                </header>
+                <img src="{{ url_for('static', filename='images/loginsection1.png') }}"
+                    alt="A group of university students collaborating on a project.">
+            </div>
+        </section>
+
+        <!-- Right Partition: Login Interface -->
+        <section class="right-side">
+            <div class="login-container">
+                <header class="form-header">
+                    <h2>Welcome Back</h2>
+                    <!-- More direct and action-oriented text -->
+                    <p>Sign in to continue to your dashboard.</p>
+                </header>
+
+                <form method="post" action="/login">
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <label for="username">Username or Email</label>
+                        <input type="text" id="username" name="username" required autocomplete="username">
                     </div>
+
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Sign In</button>
+
+                    <button type="submit" class="login-btn">Login</button>
                 </form>
 
-                <button class="btn-wallet" onclick="connectWallet()">
-                    🦊 Sign in with MetaMask
-                </button>
-
-                <div class="auth-links">
-                    <p>Don't have an account? <a href="{{ url_for('register') }}">Sign up</a></p>
-                    <p><a href="{{ url_for('index') }}">← Back to Home</a></p>
+                <!-- A common divider pattern that's easier to style professionally -->
+                <div class="divider">
+                    <span class="divider-line"></span>
+                    <p class="divider-text">Or continue with</p>
+                    <span class="divider-line"></span>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script>
-        function connectWallet() {
-            alert('MetaMask integration coming soon!');
-        }
-        
-        // Auto-hide flash messages after 5 seconds
-        setTimeout(() => {
-            const flashMessages = document.querySelectorAll('.flash-message');
-            flashMessages.forEach(msg => {
-                msg.style.opacity = '0';
-                msg.style.transform = 'translateX(100%)';
-                setTimeout(() => msg.remove(), 300);
-            });
-        }, 5000);
-    </script>
+                <div class="social-login-section">
+                    <div class="social-icons">
+                        <a href="#" aria-label="Continue with Google"><img
+                                src="{{ url_for('static', filename='images/google.png') }}" alt="Google icon"></a>
+                        <a href="#" aria-label="Continue with GitHub"><img
+                                src="{{ url_for('static', filename='images/github.png') }}" alt="GitHub icon"></a>
+                        <a href="#" aria-label="Continue with LinkedIn"><img
+                                src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn icon"></a>
+                    </div>
+                </div>
+
+                <!-- Footer section with a more standard layout for sign-up and password links -->
+                <footer class="form-footer">
+                    <p class="signup-prompt">
+                        Don't have an account? <a href="#">Sign Up</a>
+                    </p>
+                    <a href="#" class="forgot-password-link">Forgot Password?</a>
+                </footer>
+            </div>
+        </section>
+
+    </main>
+
 </body>
+
 </html>

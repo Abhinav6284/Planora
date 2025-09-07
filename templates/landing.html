@@ -2,252 +2,245 @@
 <html lang="en">
 
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planora - The Future of Productivity</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="script.js"></script>
+    <title>PLANORA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
 </head>
 
 <body>
-    <!-- Header: Becomes sticky and changes style on scroll -->
-    <header class="header" id="header">
-        <div class="container nav">
-            <a href="#" class="logo">
-                <div class="logo-icon">P</div>
-                Planora
-            </a>
-            <nav class="nav-links" id="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#pricing" class="nav-link">Pricing</a>
-                <a href="#cta" class="nav-link">Get Started</a>
-            </nav>
-            <a href="login.html" class="btn btn-secondary">Sign In</a>
-            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-            </button>
+    <div class="navbar">
+        <div class="logo"><a href="#home">Planora</a></div>
+        <div class="nav-items">
+            <div class="menu">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#getstarted">Get Started</a>
+                <a href="#about">About</a>
+            </div>
         </div>
-    </header>
+        <div class="auth">
+            <a href="{{ url_for('register_page') }}" class="btn-outline">Register</a>
+            <a href="{{ url_for('login_page') }}" class="btn-solid">Login</a>
+        </div>
+    </div>
 
-    <main>
-        <!-- Hero Section: With dynamic stats and animated text -->
-        <section class="hero section">
-            <div class="container hero-content">
-                <div class="hero-text">
-                    <p class="hero-subtitle">NEXT-GENERATION PRODUCTIVITY</p>
-                    <h1 class="hero-title">Orchestrate Your Success.</h1>
-                    <p class="hero-description">
-                        Planora is not just a to-do list. It's a high-performance ecosystem designed to streamline your
-                        workflow, amplify focus, and unlock your full potential.
-                    </p>
-                    <div class="hero-cta">
-                        <a href="register.html" class="btn btn-primary btn-large">
-                            Start for Free <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="stat">
-                            <span class="stat-number" data-target="150">0</span>
-                            <span class="stat-label">k+ Users</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number" data-target="4.9">0</span>
-                            <span class="stat-label">Star Rating</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number" data-target="10">0</span>
-                            <span class="stat-label">m+ Tasks</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="hero-card glass-card">
-                        <div class="card-header">
-                            <h3 class="card-title">Project Quantum Leap</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="metric">
-                                <span class="metric-label">API Integration</span>
-                                <span class="metric-value">92%</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">UI/UX Finalized</span>
-                                <span class="metric-value">75%</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">Launch Readiness</span>
-                                <span class="metric-value">PENDING</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+    <section class="hero" id="home">
+        <div class="hero-text">
+            <h1 id="typed-text"></h1>
+            <p>“Believe in yourself and all that you are. Know that there is something inside you that is greater than
+                any obstacle.”
+            </p>
+            <p>~Christian D. Larson</p>
+            <div class="space"></div>
+            <a href="{{ url_for('register_page') }}" class="hero-btn">Get Started</a>
+        </div>
+
+
+        <div class="hero-image">
+            <img src="{{ url_for('static', filename='images/herosection1.png') }}" alt="Hero Image">
+        </div>
+    </section>
+
+
+    <section class="cta-block">
+        <h2>Achievements are Waiting!</h2>
+        <p>Join Planora Today and fast-track your growth!</p>
+        <div class="cta-buttons">
+            <a href="/register_page" class="btn-solid">Let's Start</a>
+            <a href="/register_page" class="btn-outline">Learn More</a>
+        </div>
+    </section>
+    <section class="feature-cards" id="features">
+
+        <h1>Features of Planora</h1>
+        <div class="card">
+            <div class="icon-container">
+                <img src="static/images/icon1.svg" alt="Feature Icon" class="feature-icon">
             </div>
-        </section>
-
-        <!-- Features Section: With hover and scroll-in animations -->
-        <section id="features" class="features section">
-            <div class="container">
-                <div class="features-header">
-                    <p class="features-subtitle">CORE PROTOCOLS</p>
-                    <h2 class="features-title">Engineered for Peak Performance</h2>
-                    <p class="features-description">Discover the powerful, interconnected features that make Planora an
-                        unstoppable force in productivity.</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card glass-card fade-in">
-                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
-                        <h3 class="feature-title">AI-Powered Prioritization</h3>
-                        <p class="feature-description">Our intelligent engine analyzes your tasks and suggests the most
-                            optimal path to completion, keeping you focused on what truly matters.</p>
-                    </div>
-                    <div class="feature-card glass-card fade-in">
-                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                        <h3 class="feature-title">End-to-End Encryption</h3>
-                        <p class="feature-description">Your data is your most valuable asset. We protect it with
-                            military-grade encryption, ensuring complete privacy and security.</p>
-                    </div>
-                    <div class="feature-card glass-card fade-in">
-                        <div class="feature-icon"><i class="fas fa-cogs"></i></div>
-                        <h3 class="feature-title">Seamless Integration</h3>
-                        <p class="feature-description">Connect Planora with your favorite tools. Our robust API allows
-                            for limitless workflow customization and automation.</p>
-                    </div>
-                </div>
+            <h3>Intelligent Goal Tracking</h3>
+            <p>Effortlessly set, monitor, and visualize your personal and professional objectives. Planora transforms
+                your goals into
+                actionable milestones, providing real-time progress updates and motivating insights to keep you focused
+                every day.</p>
+        </div>
+        <div class="card">
+            <div class="icon-container">
+                <img src="static/images/icon2.svg" alt="Feature Icon" class="feature-icon">
             </div>
-        </section>
-
-        <!-- Pricing Section: NEWLY ADDED DYNAMIC SECTION -->
-        <section id="pricing" class="pricing section">
-            <div class="container">
-                <div class="features-header">
-                    <p class="features-subtitle">FLEXIBLE PLANS</p>
-                    <h2 class="features-title">Pricing That Scales With You</h2>
-                    <div class="pricing-toggle">
-                        <span>Monthly</span>
-                        <label class="switch">
-                            <input type="checkbox" id="pricing-toggle">
-                            <span class="slider"></span>
-                        </label>
-                        <span>Yearly (Save 20%)</span>
-                    </div>
-                </div>
-                <div class="pricing-grid">
-                    <!-- Tier 1: Free -->
-                    <div class="pricing-card glass-card fade-in">
-                        <h3>Starter</h3>
-                        <div class="price">
-                            <span class="monthly-price">$0</span>
-                            <span class="yearly-price hidden">$0</span>
-                            <small>/month</small>
-                        </div>
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Up to 50 tasks</li>
-                            <li><i class="fas fa-check-circle"></i> Basic analytics</li>
-                            <li><i class="fas fa-check-circle"></i> Mobile & Desktop Apps</li>
-                        </ul>
-                        <a href="register.html" class="btn btn-outline">Start for Free</a>
-                    </div>
-                    <!-- Tier 2: Pro (Featured) -->
-                    <div class="pricing-card glass-card featured fade-in">
-                        <div class="popular-badge">Most Popular</div>
-                        <h3>Pro</h3>
-                        <div class="price">
-                            <span class="monthly-price">$9</span>
-                            <span class="yearly-price hidden">$86</span>
-                            <small class="monthly-price">/month</small>
-                            <small class="yearly-price hidden">/year</small>
-                        </div>
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Unlimited tasks</li>
-                            <li><i class="fas fa-check-circle"></i> AI Assistant</li>
-                            <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
-                            <li><i class="fas fa-check-circle"></i> Priority support</li>
-                        </ul>
-                        <a href="register.html" class="btn btn-primary">Try Pro</a>
-                    </div>
-                    <!-- Tier 3: Team -->
-                    <div class="pricing-card glass-card fade-in">
-                        <h3>Team</h3>
-                        <div class="price">
-                            <span class="monthly-price">$19</span>
-                            <span class="yearly-price hidden">$182</span>
-                            <small class="monthly-price">/user/month</small>
-                            <small class="yearly-price hidden">/user/year</small>
-                        </div>
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Everything in Pro</li>
-                            <li><i class="fas fa-check-circle"></i> Team collaboration</li>
-                            <li><i class="fas fa-check-circle"></i> Admin controls & SSO</li>
-                        </ul>
-                        <a href="#" class="btn btn-outline">Contact Sales</a>
-                    </div>
-                </div>
+            <h3>AI-Powered Productivity Insights</h3>
+            <p>Leverage advanced AI algorithms to analyze your habits and workflow. Planora offers personalized
+                suggestions, smart
+                reminders, and data-driven strategies that help you optimize your routines and achieve more with less
+                effort.</p>
+        </div>
+        <div class="card">
+            <div class="icon-container">
+                <!-- Replace with your SVG or image -->
+                <img src="static/images/icon3.svg" alt="Feature Icon" class="feature-icon">
             </div>
-        </section>
-
-        <!-- CTA Section: A clear call to action -->
-        <section id="cta" class="cta section">
-            <div class="container cta-content">
-                <h2 class="cta-title">Ready to Upgrade Your Workflow?</h2>
-                <p class="cta-description">Join the new era of productivity. Get started with Planora for free and
-                    experience the future of task management today.</p>
-                <div class="cta-buttons">
-                    <a href="register.html" class="btn btn-primary btn-large">Claim Your Free Account</a>
-                    <a href="#" class="btn btn-secondary">Learn More</a>
-                </div>
+            <h3>Smart Task Management</h3>
+            <p>Organize tasks with intuitive lists, priorities, and deadlines. Planora enables seamless scheduling,
+                automatic sorting
+                by urgency, and quick access to your most important actions, ensuring you never miss a critical step.
+            </p>
+        </div>
+        <div class="card">
+            <div class="icon-container">
+                <!-- Replace with your SVG or image -->
+                <img src="static/images/icon4.svg" alt="Feature Icon" class="feature-icon">
             </div>
-        </section>
-    </main>
+            <h3>Celebratory Milestones & Achievements</h3>
+            <p>Recognize and celebrate every success, big or small. Planora’s achievement system encourages consistent
+                progress by
+                highlighting completed milestones, motivating you to maintain momentum and reach your full potential.
+            </p>
+        </div>
+    </section>
+    <section class="pricing-sections" id="pricing">
+        <h1>Keep Growing Without Limits</h1>
+        <h3>Choose Planora’s affordable, value-packed plans</h3>
 
-    <!-- Footer Section -->
+        <div class="pricing-sections">
+            <div class="pricing-card">
+                <h3>Basic Plan</h3>
+                <p class="price">₹19/month</p>
+                <ul>
+                    <li>5 personalized roadmaps – from beginner to professional</li>
+                    <li>Personal progress tracking</li>
+                    <li>AI-powered assistance</li>
+                    <li>Daily schedules tailored to your goals</li>
+                </ul>
+                <a href="/register_page" class="btn-pricing">Start with Basic</a>
+            </div>
+
+            <div class="pricing-card recommended">
+                <h3>Pro Plan</h3>
+                <p class="price">₹59/month</p>
+                <ul>
+                    <li>Everything in Basic</li>
+                    <li>20+ personalized roadmaps</li>
+                    <li>Smart in-app reminders & notifications</li>
+                    <li>AI rescheduling for missed tasks</li>
+                    <li>Google/iOS calendar integration</li>
+                </ul>
+                <a href="/register_page" class="btn-pricing">Upgrade to Pro</a>
+            </div>
+
+            <div class="pricing-card">
+                <h3>Elite Plan</h3>
+                <p class="price">₹79/month</p>
+                <ul>
+                    <li>Everything in Pro</li>
+                    <li>Unlimited personalized roadmaps</li>
+                    <li>Complete interview preparation guidance</li>
+                    <li>Mock interview practice sessions</li>
+                    <li>Exclusive curated resources & courses</li>
+                </ul>
+                <a href="/register_page" class="btn-pricing">Go Elite</a>
+            </div>
+        </div>
+
+    </section>
+    <div class="thought-card">
+        <img src="your-image.jpg" alt="your icon" class="thought-icon">
+        <div class="thought-content">
+            <p>
+                "During my graduation, I had no clear idea of what Java or C++ really meant, or how they were
+                used
+                in real life. I
+                treated my studies as just academics, not as practical skills that could shape my future.
+
+                But when I entered my master’s, everything changed. I finally understood how these technologies
+                work
+                and the value they
+                bring. At that time, I was overwhelmed—spending endless hours trying to create timetables,
+                manage
+                multiple projects,
+                juggle courses, and search for reliable career roadmaps. It was exhausting, and honestly, I felt
+                lost and broken.
+
+                That experience inspired me to build Planora. I didn’t want students to go through the same
+                struggles I faced. Instead,
+                I wanted to create a tool that gives you clarity, structure, and personalized roadmaps—so you
+                can
+                focus on growth, not
+                chaos.
+
+                With Planora, you don’t waste time figuring out “what’s next.” You get a clear path,
+                step-by-step
+                guidance, and the
+                confidence to move forward in your journey."
+                ~ Abhinav Goyal
+            </p>
+        </div>
+    </div>
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <a href="#" class="logo">
-                        <div class="logo-icon">P</div>
-                        Planora
-                    </a>
-                </div>
-                <div class="footer-section">
-                    <h4>Product</h4>
-                    <ul class="footer-links">
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#">API</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Company</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Connect</h4>
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="social-link" aria-label="Github"><i class="fab fa-github"></i></a>
-                    </div>
-                </div>
+        <div class="footer-container">
+            <!-- About Section -->
+            <div class="footer-section about">
+                <h3>About Planora</h3>
+                <p>
+                    Planora helps students stay on track with structured roadmaps,
+                    personalized schedules, and AI assistance to achieve career goals faster.
+                </p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Planora. All rights reserved.</p>
+
+            <!-- Quick Links -->
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="{{ url_for('register_page') }}">Register</a>
+                <a href="{{ url_for('login_page') }}">Login </a>
+
             </div>
+
+            <!-- Contact Section -->
+            <div class="footer-section contact">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:support@planora.com">support@planora.com</a></p>
+                <p>Phone: <a href="tel:+919876543210">+91 98765 43210</a></p>
+                <p>Address: 123 Planora Street, City, India</p>
+            </div>
+
+            <!-- Social Links -->
+            <div class="footer-section social">
+                <h3>Follow Us</h3>
+                <a href="#">LinkedIn</a> |
+                <a href="#">Twitter</a> |
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 Planora. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- JavaScript File -->
+    </section>
 
 </body>
 
 </html>
+<script>
+    var typed = new Typed("#typed-text", {
+        strings: [
+            "Welcome to Planora!",
+            "Your Study-Buddy!",
+            "Let’s Do Something Amazing "
+        ],
+        typeSpeed: 70,
+        backSpeed: 50,
+        backDelay: 1500,
+        loop: true,
+        showCursor:false
+    });
+</script>
