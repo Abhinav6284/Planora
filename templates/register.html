@@ -4,103 +4,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
     <title>Register - Planora</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .register-form {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .login-link a {
-            color: #007bff;
-            text-decoration: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 
 <body>
-    <div class="register-form">
-        <h2>Create Account</h2>
-        <form method="POST">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+
+    <main class="page-container">
+        <!-- Left Partition: Branding -->
+        <section class="image-section">
+            <div class="branding-content">
+                <header>
+                    <h1><span id="typing-effect"></span></h1>
+                    <h2>Learn like never before</h2>
+                    <p class="subheading">Get Ready to fly like an Eagle</p>
+                </header>
+                <img src="{{ url_for('static', filename='images/registersection1.png') }}"
+                    alt="A group of university students collaborating on a project.">
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+        </section>
+
+        <!-- Right Partition: Registration Form -->
+        <section class="right-side">
+            <div class="register-container">
+                <header class="form-header">
+                    <h2>Create Your Account</h2>
+                    <p>Sign up to get started.</p>
+                </header>
+
+                <form method="post" action="/register">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first-name">First Name</label>
+                            <input type="text" id="first-name" name="first-name" required autocomplete="given-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="last-name">Last Name</label>
+                            <input type="text" id="last-name" name="last-name" required autocomplete="family-name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required autocomplete="new-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required
+                            autocomplete="new-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="how-heard">How did you hear about us?</label>
+                        <select id="how-heard" name="how-heard">
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="social-media">Social Media</option>
+                            <option value="whatsapp">WhatsApp Groups</option>
+                            <option value="referral">From a Referral</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- This input field is hidden by default and appears when "Other" is selected -->
+                    <div class="form-group" id="how-heard-other-group">
+                        <label for="how-heard-other">Please specify</label>
+                        <input type="text" id="how-heard-other" name="how-heard-other">
+                    </div>
+
+                    <div class="terms-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to the <a href="/terms">Terms and Conditions</a></label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+
+                <footer class="form-footer">
+                    <p class="signin-prompt">
+                        Already have an account? <a href="/login">Sign In</a>
+                    </p>
+                </footer>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
-            </div>
-            <button type="submit" class="btn">Register</button>
-        </form>
-        <div class="login-link">
-            <p>Already have an account? <a href="/login">Login here</a></p>
-        </div>
-    </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Script for dropdown interaction ---
+        const howHeardSelect = document.getElementById('how-heard');
+        const otherGroup = document.getElementById('how-heard-other-group');
+
+        howHeardSelect.addEventListener('change', function () {
+            if (this.value === 'other') {
+                otherGroup.style.display = 'block';
+            } else {
+                otherGroup.style.display = 'none';
+            }
+        });
+
+        // --- Script for Typing Effect ---
+        const typingElement = document.getElementById('typing-effect');
+        // Add or change the words here
+        const words = ["Join Planora Today", "Unlock Your Potential", "Plan with Precision"];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentWord = words[wordIndex];
+
+            // Type or delete a character
+            let displayText = isDeleting
+                ? currentWord.substring(0, charIndex - 1)
+                : currentWord.substring(0, charIndex + 1);
+
+            typingElement.textContent = displayText;
+            charIndex = displayText.length;
+
+            const typeSpeed = isDeleting ? 100 : 150;
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                // Pause at the end of the word
+                setTimeout(() => isDeleting = true, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                // Move to the next word
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        // Start the effect once the page loads
+        document.addEventListener('DOMContentLoaded', type);
+    </script>
+
 </body>
 
 </html>

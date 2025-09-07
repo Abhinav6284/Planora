@@ -25,6 +25,11 @@ def register_page():
     return render_template('register.html')
 
 
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+
 @app.route('/test')
 def test():
     """A test route to confirm the environment is working."""
@@ -38,11 +43,6 @@ def test():
 
 if __name__ == '__main__':
     print("--- Planora Server Starting ---")
-    print(f"📁 Base Directory: {basedir}")
-    print(f"📁 Static Folder: {app.static_folder}")
-    print(f"📁 Template Folder: {app.template_folder}")
-
-    # Debug routes to see what Flask has registered
     print("\n=== Registered Routes ===")
     for rule in app.url_map.iter_rules():
         print(f"{rule.endpoint:25s} {rule.methods} {rule}")

@@ -1,0 +1,105 @@
+/* --- Global Styles --- */
+:root {
+    --background-color: #1e1e1e;
+    --text-color: #eaeaea;
+    --heading-color: #ff7f32;
+    --muted-text: #b0b0b0;
+    --link-color: #ff7f32;
+    --link-hover: #ffa45c;
+    --card-bg: #2a2a2a;
+    --border-radius: 10px;
+    --font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --max-width: 900px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.8;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- Container --- */
+.terms-container {
+    max-width: var(--max-width);
+    width: 100%;
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Header --- */
+.terms-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.terms-header h1 {
+    font-size: 2.5rem;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+}
+
+.terms-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.terms-header p {
+    color: var(--muted-text);
+    font-size: 0.95rem;
+}
+
+/* --- Content Section --- */
+.terms-content article {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.terms-content article:last-child {
+    border-bottom: none;
+}
+
+.terms-content h2 {
+    font-size: 1.4rem;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+}
+
+.terms-content p {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* --- Footer --- */
+.terms-footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.terms-footer a {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    background: var(--link-color);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition:  0.3s ease;
+}
+
+.terms-footer a:hover {
+    background: var(--link-hover);
+}
