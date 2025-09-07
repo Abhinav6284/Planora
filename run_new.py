@@ -9,27 +9,6 @@ app = Flask(__name__,
             template_folder=os.path.join(basedir, './templates/'))
 
 
-@app.route('/')
-def home():
-    """Renders the main landing page."""
-    return render_template('landing.html')
-
-
-@app.route('/login')
-def login_page():
-    return render_template('login.html')
-
-
-@app.route('/register')
-def register_page():
-    return render_template('register.html')
-
-
-@app.route('/terms')
-def terms():
-    return render_template('terms.html')
-
-
 @app.route('/test')
 def test():
     """A test route to confirm the environment is working."""

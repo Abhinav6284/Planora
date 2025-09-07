@@ -81,10 +81,10 @@
                         <input type="checkbox" id="terms" name="terms" required>
                         <label for="terms">I agree to the <a href="/terms">Terms and Conditions</a></label>
                     </div>
-
-                    <button type="submit" class="submit-btn">Create Account</button>
+                    <form action="/api/auth/register" method="POST" id="registerForm">
+                        <button type="submit" class="submit-btn">Create Account</button>
+                    </form>
                 </form>
-
                 <footer class="form-footer">
                     <p class="signin-prompt">
                         Already have an account? <a href="/login">Sign In</a>

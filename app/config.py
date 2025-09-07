@@ -7,7 +7,8 @@ load_dotenv(os.path.join(basedir, '..', '.env'))
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    SECRET_KEY = os.environ.get(
+        'SECRET_KEY') or 'dev-secret-key-change-in-production'
 
     # PostgreSQL Configuration
     DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -15,11 +16,11 @@ class Config:
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL or \
-                              f"postgresql://{os.environ.get('POSTGRES_USER', 'postgres')}:" \
-                              f"{os.environ.get('POSTGRES_PASSWORD', 'password')}@" \
-                              f"{os.environ.get('POSTGRES_HOST', 'localhost')}:" \
-                              f"{os.environ.get('POSTGRES_PORT', '5432')}/" \
-                              f"{os.environ.get('POSTGRES_DB', 'planora_db')}"
+        f"postgresql://{os.environ.get('POSTGRES_USER', 'postgres')}:" \
+        f"{os.environ.get('POSTGRES_PASSWORD', 'password')}@" \
+        f"{os.environ.get('POSTGRES_HOST', 'localhost')}:" \
+        f"{os.environ.get('POSTGRES_PORT', '5432')}/" \
+        f"{os.environ.get('POSTGRES_DB', 'planora')}"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {

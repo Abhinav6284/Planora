@@ -1,114 +1,79 @@
+# app.py
+
 import os
-import sqlite3
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from dotenv import load_dotenv
+from app.models.user import User
+from app.extensions import db, jwt
 
-app = Flask(__name__)
-app.secret_key = 'planora-secret-key-change-in-production'
+load_dotenv()
 
-# Database configuration
-DATABASE = 'users.db'
 
-def init_db():
-    """Initialize the SQLite database with users table"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    conn.commit()
-    conn.close()
+def create_app(config_name='default'):
+    app = Flask(__name__)
+    app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 
-def get_db_connection():
-    """Get database connection"""
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    from app.config import config
+    app.config.from_object(config[config_name])
 
-# Routes
-@app.route('/')
-def index():
-    """Landing page"""
-    return render_template('index.html')
+    from app.extensions import db, jwt
+    db.init_app(app)
+    jwt.init_app(app)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    """Login page and handler"""
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        
-        conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-        conn.close()
-        
-        if user and check_password_hash(user['password_hash'], password):
-            session['user_id'] = user['id']
-            session['user_name'] = user['name']
-            session['user_email'] = user['email']
-            flash('Login successful!', 'success')
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid email or password.', 'error')
-    
-    return render_template('login.html')
+    # Register blueprints for API routes
+    from app.api.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    """Register page and handler"""
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        
-        # Check if user already exists
-        conn = get_db_connection()
-        existing_user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-        
-        if existing_user:
-            flash('Email already registered. Please use a different email.', 'error')
-            conn.close()
-        else:
-            # Create new user
-            password_hash = generate_password_hash(password)
-            conn.execute('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)',
-                        (name, email, password_hash))
-            conn.commit()
-            conn.close()
-            flash('Registration successful! Please log in.', 'success')
-            return redirect(url_for('login'))
-    
-    return render_template('register.html')
+    @app.route('/')
+    def index():
+        return render_template('landing.html')
 
-@app.route('/dashboard')
-def dashboard():
-    """Dashboard page - protected route"""
-    if 'user_id' not in session:
-        flash('Please log in to access the dashboard.', 'error')
-        return redirect(url_for('login'))
-    
-    return render_template('dashboard.html', user_name=session['user_name'])
+    @app.route('/register', methods=['GET', 'POST'])
+    def register_page():
+        from flask import request, redirect, flash
+        import requests
+        if request.method == 'POST':
+            api_url = request.url_root + 'api/auth/register'
+            response = requests.post(api_url, json=request.form.to_dict())
 
-@app.route('/logout')
-def logout():
-    """Logout handler"""
-    session.clear()
-    flash('You have been logged out.', 'info')
-    return redirect(url_for('index'))
+            if response.status_code == 201:
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Registration failed')
+
+        return render_template('register.html')
+
+    @app.route('/login')
+    def login_page():
+        """Login page for a user"""
+        return render_template('login.html')
+
+    @app.route('/dashboard')
+    def dashboard():
+        """Dashboard page - protected route"""
+        # This route should be protected by JWT
+        return render_template('dashboard.html', user_name="Test User")
+
+    @app.route('/logout')
+    def logout():
+        """Logout handler"""
+        return redirect(url_for('index'))
+
+    # Finally, return the app instance
+    return app
+
 
 if __name__ == '__main__':
-    # Initialize database
-    init_db()
+    app = create_app('development')
+    with app.app_context():
+        # This will create the database tables based on your User model
+        # Import the model to make it available
+        db.create_all()
+        print("Database tables created/updated.")
+
     print("🚀 Planora App Starting...")
-    print("📁 Database: users.db")
     print("🌐 Visit: http://localhost:5000")
-    
+
     # Run the app
     app.run(debug=True, port=5000)
