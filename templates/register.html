@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Planora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=SF+Pro+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 
@@ -77,13 +78,14 @@
                         <input type="text" id="how-heard-other" name="how-heard-other">
                     </div>
 
-                    <div class="terms-group">
-                        <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">I agree to the <a href="/terms">Terms and Conditions</a></label>
+                    <div class="form-group">
+                        <label for="terms" class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            I agree to the <a href="/terms">Terms and Conditions</a>
+                        </label>
                     </div>
-                    <form action="/api/auth/register" method="POST" id="registerForm">
-                        <button type="submit" class="submit-btn">Create Account</button>
-                    </form>
+                    
+                    <button type="submit" class="submit-btn">Create Account</button>
                 </form>
                 <footer class="form-footer">
                     <p class="signin-prompt">

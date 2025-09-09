@@ -1,105 +1,292 @@
-/* --- Global Styles --- */
+/* -------------------- CSS Custom Properties -------------------- */
 :root {
-    --background-color: #1e1e1e;
-    --text-color: #eaeaea;
-    --heading-color: #ff7f32;
-    --muted-text: #b0b0b0;
-    --link-color: #ff7f32;
-    --link-hover: #ffa45c;
-    --card-bg: #2a2a2a;
-    --border-radius: 10px;
-    --font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --max-width: 900px;
+    /* Modern Color Palette - ChronoTask Inspired */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    
+    /* Color Variables */
+    --primary-blue: #667eea;
+    --primary-purple: #764ba2;
+    --accent-pink: #f093fb;
+    --accent-red: #f5576c;
+    --accent-cyan: #4facfe;
+    --accent-light-cyan: #00f2fe;
+    
+    /* Neutral Colors */
+    --white: #ffffff;
+    --near-white: #fafafa;
+    --light-gray: #f8f9fa;
+    --gray-100: #e9ecef;
+    --gray-200: #dee2e6;
+    --gray-300: #ced4da;
+    --gray-400: #adb5bd;
+    --gray-500: #6c757d;
+    --gray-600: #495057;
+    --gray-700: #343a40;
+    --gray-800: #212529;
+    --dark: #0d1117;
+    --darker: #010409;
+    
+    /* Glass Morphism */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --glass-backdrop: blur(10px);
+    
+    /* Typography */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-secondary: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    /* Spacing & Layout */
+    --container-max-width: 900px;
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 20px;
+    --border-radius-xl: 24px;
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-* {
-    margin: 0;
-    padding: 0;
+/* -------------------- General & Reset -------------------- */
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
 body {
-    font-family: var(--font-family);
-    background: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.8;
-    padding: 40px 20px;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+    background: var(--hero-gradient);
+    color: var(--white);
+    line-height: 1.7;
+    padding: 2rem 1rem;
     display: flex;
     justify-content: center;
+    min-height: 100vh;
 }
 
-/* --- Container --- */
-.terms-container {
-    max-width: var(--max-width);
+/* Global background animation */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    height: 100%;
+    background: var(--hero-gradient);
+    z-index: -2;
 }
 
-/* --- Header --- */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 118, 117, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+    z-index: -1;
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* -------------------- Container -------------------- */
+.terms-container {
+    max-width: var(--container-max-width);
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--glass-shadow);
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.terms-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-gradient);
+    z-index: 1;
+}
+
+.terms-container > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* -------------------- Header -------------------- */
 .terms-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .terms-header h1 {
     font-size: 2.5rem;
-    color: var(--heading-color);
-    margin-bottom: 10px;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: var(--font-secondary);
 }
 
 .terms-header h2 {
     font-size: 1.8rem;
-    color: var(--text-color);
-    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.5rem;
 }
 
 .terms-header p {
-    color: var(--muted-text);
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.95rem;
 }
 
-/* --- Content Section --- */
+/* -------------------- Content Section -------------------- */
 .terms-content article {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #444;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .terms-content article:last-child {
     border-bottom: none;
+    margin-bottom: 0;
 }
 
 .terms-content h2 {
     font-size: 1.4rem;
-    color: var(--heading-color);
-    margin-bottom: 10px;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    font-family: var(--font-secondary);
 }
 
 .terms-content p {
     font-size: 1rem;
-    color: var(--text-color);
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+    margin-bottom: 1rem;
 }
 
-/* --- Footer --- */
+.terms-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* -------------------- Footer -------------------- */
 .terms-footer {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .terms-footer a {
     display: inline-block;
-    padding: 12px 24px;
-    border-radius: var(--border-radius);
-    background: var(--link-color);
-    color: #fff;
+    padding: 1rem 2rem;
+    background: var(--accent-gradient);
+    color: var(--white);
     text-decoration: none;
-    font-weight: bold;
-    transition:  0.3s ease;
+    font-weight: 600;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    transition: var(--transition-bounce);
+    position: relative;
+    overflow: hidden;
+}
+
+.terms-footer a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.terms-footer a:hover::before {
+    left: 100%;
 }
 
 .terms-footer a:hover {
-    background: var(--link-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+}
+
+/* -------------------- Responsive Design -------------------- */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0.5rem;
+    }
+    
+    .terms-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .terms-header h1 {
+        font-size: 2rem;
+    }
+    
+    .terms-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .terms-content h2 {
+        font-size: 1.2rem;
+    }
+    
+    .terms-content p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 0.5rem;
+    }
+    
+    .terms-container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .terms-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .terms-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .terms-footer a {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.95rem;
+    }
 }
