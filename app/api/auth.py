@@ -7,7 +7,7 @@ from ..extensions import db
 bp = Blueprint('auth', __name__)
 
 
-@bp.route('/register', methods=['POST'])
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     """Register a new user"""
     from ..models.user import User
@@ -60,7 +60,7 @@ def register():
         }), 500
 
 
-@bp.route('/login', methods=['POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Login user"""
     from ..models.user import User

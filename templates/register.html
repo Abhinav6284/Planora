@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Create Your Account - Planora</title>
+=======
+    <title>Register - Planora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=SF+Pro+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+>>>>>>> 724e44c07083fdf373ac3d299bd9c3b2da4de062
     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 
@@ -63,6 +68,7 @@
                         <input type="password" id="confirm_password" name="confirm_password" required>
                     </div>
 
+<<<<<<< HEAD
                     <button type="submit" class="register-btn" id="submitBtn">Create Account</button>
                 </form>
 
@@ -83,6 +89,23 @@
                     </div>
                 </div>
 
+=======
+                    <!-- This input field is hidden by default and appears when "Other" is selected -->
+                    <div class="form-group" id="how-heard-other-group">
+                        <label for="how-heard-other">Please specify</label>
+                        <input type="text" id="how-heard-other" name="how-heard-other">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="terms" class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            I agree to the <a href="/terms">Terms and Conditions</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+>>>>>>> 724e44c07083fdf373ac3d299bd9c3b2da4de062
                 <footer class="form-footer">
                     <p class="login-prompt">
                         Already have an account? <a href="/login">Sign In</a>
