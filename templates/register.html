@@ -4,147 +4,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Planora</title>
+    <title>Create Your Account - Planora</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 
 <body>
-
     <main class="page-container">
-        <!-- Left Partition: Branding -->
         <section class="image-section">
             <div class="branding-content">
                 <header>
-                    <h1><span id="typing-effect"></span></h1>
-                    <h2>Learn like never before</h2>
-                    <p class="subheading">Get Ready to fly like an Eagle</p>
+                    <h1>Planora</h1>
+                    <h2>Begin Your Journey</h2>
+                    <p class="subheading">Join thousands of users planning smarter with Planora.</p>
                 </header>
                 <img src="{{ url_for('static', filename='images/registersection1.png') }}"
-                    alt="A group of university students collaborating on a project.">
+                    alt="Students collaborating on a planning project">
             </div>
         </section>
 
-        <!-- Right Partition: Registration Form -->
         <section class="right-side">
             <div class="register-container">
                 <header class="form-header">
                     <h2>Create Your Account</h2>
-                    <p>Sign up to get started.</p>
+                    <p>Get started with your free Planora account</p>
                 </header>
 
-                <form method="post" action="/register">
+                <div id="message-container" class="message-container"></div>
+
+                <form id="registerForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="first-name">First Name</label>
-                            <input type="text" id="first-name" name="first-name" required autocomplete="given-name">
+                            <label for="first_name">First Name</label>
+                            <input type="text" id="first_name" name="first_name">
                         </div>
                         <div class="form-group">
-                            <label for="last-name">Last Name</label>
-                            <input type="text" id="last-name" name="last-name" required autocomplete="family-name">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" id="last_name" name="last_name">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required autocomplete="email">
+                        <label for="username">Username <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required autocomplete="new-password">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="confirm-password">Confirm Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" required
-                            autocomplete="new-password">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" required minlength="6">
                     </div>
 
                     <div class="form-group">
-                        <label for="how-heard">How did you hear about us?</label>
-                        <select id="how-heard" name="how-heard">
-                            <option value="" disabled selected>Select an option</option>
-                            <option value="social-media">Social Media</option>
-                            <option value="whatsapp">WhatsApp Groups</option>
-                            <option value="referral">From a Referral</option>
-                            <option value="other">Other</option>
-                        </select>
+                        <label for="confirm_password">Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
                     </div>
 
-                    <!-- This input field is hidden by default and appears when "Other" is selected -->
-                    <div class="form-group" id="how-heard-other-group">
-                        <label for="how-heard-other">Please specify</label>
-                        <input type="text" id="how-heard-other" name="how-heard-other">
-                    </div>
-
-                    <div class="terms-group">
-                        <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">I agree to the <a href="/terms">Terms and Conditions</a></label>
-                    </div>
-
-                    <button type="submit" class="submit-btn">Create Account</button>
+                    <button type="submit" class="register-btn" id="submitBtn">Create Account</button>
                 </form>
 
+                <div class="divider">
+                    <span class="divider-line"></span>
+                    <p class="divider-text">Or sign up with</p>
+                    <span class="divider-line"></span>
+                </div>
+
+                <div class="social-login-section">
+                    <div class="social-icons">
+                        <a href="#" aria-label="Sign up with Google"><img
+                                src="{{ url_for('static', filename='images/google.png') }}" alt="Google icon"></a>
+                        <a href="#" aria-label="Sign up with GitHub"><img
+                                src="{{ url_for('static', filename='images/github.png') }}" alt="GitHub icon"></a>
+                        <a href="#" aria-label="Sign up with LinkedIn"><img
+                                src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn icon"></a>
+                    </div>
+                </div>
+
                 <footer class="form-footer">
-                    <p class="signin-prompt">
+                    <p class="login-prompt">
                         Already have an account? <a href="/login">Sign In</a>
                     </p>
                 </footer>
             </div>
         </section>
-
     </main>
 
     <script>
-        // --- Script for dropdown interaction ---
-        const howHeardSelect = document.getElementById('how-heard');
-        const otherGroup = document.getElementById('how-heard-other-group');
+        document.addEventListener('DOMContentLoaded', function () {
+            const registerForm = document.getElementById('registerForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const messageContainer = document.getElementById('message-container');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
 
-        howHeardSelect.addEventListener('change', function () {
-            if (this.value === 'other') {
-                otherGroup.style.display = 'block';
-            } else {
-                otherGroup.style.display = 'none';
+            // Helper function to display messages
+            function showMessage(message, isError = true) {
+                messageContainer.textContent = message;
+                messageContainer.style.color = isError ? '#ff5555' : '#28a745';
+                messageContainer.style.display = 'block';
             }
+
+            registerForm.addEventListener('submit', async function (event) {
+                // 1. Prevent the default browser form submission
+                event.preventDefault();
+
+                // 2. Client-side validation
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    showMessage("Passwords do not match.");
+                    return;
+                }
+                if (passwordInput.value.length < 6) {
+                    showMessage("Password must be at least 6 characters long.");
+                    return;
+                }
+
+                // Clear any previous messages and disable the button
+                showMessage('', false);
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating Account...';
+
+                // 3. Create a data object from the form inputs
+                const formData = new FormData(registerForm);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    // 4. Send the form data to your Flask API endpoint
+                    const response = await fetch("/api/auth/register", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    // 5. Handle the API's response
+                    if (result.success) {
+                        // SUCCESS! The API created the user and gave us a token.
+                        showMessage('Account created successfully! Redirecting to login...', false);
+
+                        // 6. Redirect to the login page after a short delay
+                        setTimeout(() => {
+                            window.location.href = "/login";
+                        }, 2000);
+
+                    } else {
+                        // If the API returns an error (e.g., username taken)
+                        throw new Error(result.message || 'Registration failed.');
+                    }
+
+                } catch (error) {
+                    // This will catch network errors or errors thrown from the API
+                    showMessage(error.message);
+
+                    // Re-enable the button so the user can try again
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                }
+            });
         });
-
-        // --- Script for Typing Effect ---
-        const typingElement = document.getElementById('typing-effect');
-        // Add or change the words here
-        const words = ["Join Planora Today", "Unlock Your Potential", "Plan with Precision"];
-        let wordIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-
-        function type() {
-            const currentWord = words[wordIndex];
-
-            // Type or delete a character
-            let displayText = isDeleting
-                ? currentWord.substring(0, charIndex - 1)
-                : currentWord.substring(0, charIndex + 1);
-
-            typingElement.textContent = displayText;
-            charIndex = displayText.length;
-
-            const typeSpeed = isDeleting ? 100 : 150;
-
-            if (!isDeleting && charIndex === currentWord.length) {
-                // Pause at the end of the word
-                setTimeout(() => isDeleting = true, 2000);
-            } else if (isDeleting && charIndex === 0) {
-                // Move to the next word
-                isDeleting = false;
-                wordIndex = (wordIndex + 1) % words.length;
-            }
-
-            setTimeout(type, typeSpeed);
-        }
-
-        // Start the effect once the page loads
-        document.addEventListener('DOMContentLoaded', type);
     </script>
-
 </body>
 
 </html>

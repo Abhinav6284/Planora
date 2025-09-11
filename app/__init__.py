@@ -6,7 +6,6 @@ from .config import config
 
 
 def create_app(config_name='default'):
-    # ✅ Correctly point to the folders in the parent directory
     app = Flask(__name__,
                 template_folder='../templates',
                 static_folder='../static')
@@ -38,6 +37,7 @@ def create_app(config_name='default'):
     from .api.auth import bp as auth_bp
     from .api.tasks import bp as tasks_bp
 
+    # Register blueprint with name='auth' so url_for can find it
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
 
@@ -54,11 +54,11 @@ def create_app(config_name='default'):
     def register_page():
         return render_template('register.html')
 
-    @app.route('/test')
-    def test_page():
-        return render_template('test_api.html')
-
+    @app.route('/dashboard')
+    def dashboard_page():
+        return render_template('dashboard.html')
     # API Routes
+
     @app.route('/api')
     def api_home():
         return {'message': 'Planora API is running!', 'version': '1.0.0'}

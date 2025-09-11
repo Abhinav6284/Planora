@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
     <main class="page-container">
         <section class="image-section">
             <div class="branding-content">
@@ -19,22 +18,22 @@
                     <p class="subheading">Your journey to productivity starts here.</p>
                 </header>
                 <img src="{{ url_for('static', filename='images/loginsection1.png') }}"
-                    alt="A group of university students collaborating on a project.">
+                    alt="A group of people collaborating.">
             </div>
         </section>
 
-        <!-- Right Partition: Login Interface -->
         <section class="right-side">
             <div class="login-container">
                 <header class="form-header">
                     <h2>Welcome Back</h2>
-                    <!-- More direct and action-oriented text -->
                     <p>Sign in to continue to your dashboard.</p>
                 </header>
 
-                <form method="post" action="/login">
+                <div id="message-container" class="message-container"></div>
+
+                <form id="loginForm">
                     <div class="form-group">
-                        <label for="username">Username or Email</label>
+                        <label for="username">Username</label>
                         <input type="text" id="username" name="username" required autocomplete="username">
                     </div>
 
@@ -43,10 +42,9 @@
                         <input type="password" id="password" name="password" required autocomplete="current-password">
                     </div>
 
-                    <button type="submit" class="login-btn">Login</button>
+                    <button type="submit" class="login-btn" id="submitBtn">Login</button>
                 </form>
 
-                <!-- A common divider pattern that's easier to style professionally -->
                 <div class="divider">
                     <span class="divider-line"></span>
                     <p class="divider-text">Or continue with</p>
@@ -64,18 +62,85 @@
                     </div>
                 </div>
 
-                <!-- Footer section with a more standard layout for sign-up and password links -->
                 <footer class="form-footer">
                     <p class="signup-prompt">
-                        Don't have an account? <a href="{{ url_for('register_page') }}">Sign Up</a>
+                        Don't have an account? <a href="/register">Sign Up</a>
                     </p>
                     <a href="#" class="forgot-password-link">Forgot Password?</a>
                 </footer>
             </div>
         </section>
-
     </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const messageContainer = document.getElementById('message-container');
+
+            // A helper function to display messages
+            function showMessage(message, isError = true) {
+                messageContainer.textContent = message;
+                messageContainer.style.color = isError ? '#ff5555' : '#28a745';
+                messageContainer.style.display = 'block';
+            }
+
+            loginForm.addEventListener('submit', async function (event) {
+                // 1. Prevent the default browser form submission
+                event.preventDefault();
+
+                // Clear any previous messages and disable the button
+                showMessage('', false); // Clear message
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Logging In...';
+
+                // 2. Create a data object from the form inputs
+                const formData = new FormData(loginForm);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    // 3. Send the form data to your Flask API endpoint
+                    const response = await fetch("/api/auth/login", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    // 4. Handle the API's response
+                    if (result.success) {
+                        // SUCCESS! The API returned a success message and a token.
+                        showMessage('Login successful! Redirecting...', false);
+
+                        // 5. Store the access token in the browser's local storage.
+                        // This is how your app will stay "logged in".
+                        localStorage.setItem('access_token', result.data.access_token);
+
+                        // 6. Redirect to the dashboard after a short delay.
+                        setTimeout(() => {
+                            // Make sure you have a '/dashboard' route defined in your Flask app
+                            window.location.href = "/dashboard";
+                        }, 1500);
+
+                    } else {
+                        // If the API returns an error (e.g., wrong password)
+                        throw new Error(result.message || 'Invalid credentials.');
+                    }
+
+                } catch (error) {
+                    // This will catch network errors or errors thrown from the API response
+                    showMessage(error.message);
+
+                    // Re-enable the button so the user can try again
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Login';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

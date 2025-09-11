@@ -1,5 +1,5 @@
 flask-sqlalchemy
-flask
+flask~=3.1.2
 MyApplication~=0.1.0
 SQLAlchemy~=2.0.43
 Werkzeug~=3.1.3
@@ -13,3 +13,7 @@ attrs~=25.3.0
 cryptography~=45.0.5
 redis~=5.3.1
 Booktype~=1.5
+
+
+pandas~=2.3.1
+Flask-Login~=0.6.3
