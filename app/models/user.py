@@ -1,64 +1,92 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 from ..extensions import db
 import uuid
 
 
 class User(db.Model):
+    """
+    The core User model for the Planora application.
+    This table stores all user profile information, authentication details,
+    and business logic fields like subscription status.
+    """
     __tablename__ = 'users'
 
+    # --- Core Fields ---
     id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.String(50), unique=True, default=lambda: str(uuid.uuid4()))
-    username = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    public_id = db.Column(db.String(50), unique=True,
+                          default=lambda: str(uuid.uuid4()))
+    username = db.Column(db.String(64), unique=True,
+                         nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
 
-    # Profile information
+    subscription_tier = db.Column(
+        db.String(50), nullable=False, server_default='trial')
+    trial_ends_at = db.Column(db.DateTime)
+
+    # --- Profile Information ---
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
     avatar_url = db.Column(db.String(255))
     timezone = db.Column(db.String(50), default='UTC')
 
-    # User preferences
+    # --- User Preferences ---
     theme = db.Column(db.String(20), default='light')
     notifications_enabled = db.Column(db.Boolean, default=True)
     email_notifications = db.Column(db.Boolean, default=True)
 
-    # Account status
+    # --- Account Status & Timestamps ---
     is_active = db.Column(db.Boolean, default=True)
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow,
+                           onupdate=datetime.utcnow)
     last_login = db.Column(db.DateTime)
+    phone_number = db.Column(db.String(20), unique=True,
+                             nullable=True, index=True)
+    referral_source = db.Column(db.String(100), nullable=True)
+    tasks = db.relationship('Task', backref='user', lazy='dynamic',
+                            cascade='all, delete-orphan')
+    projects = db.relationship(
+        'Project', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    categories = db.relationship(
+        'Category', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    focus_sessions = db.relationship(
+        'FocusSession', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
-    # Relationships
-    tasks = db.relationship('Task', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    # --- METHODS ---
+    def start_trial(self, days=60):
+        """Starts a premium trial for the user."""
+        self.subscription_tier = 'trial'
+        self.trial_ends_at = datetime.utcnow() + timedelta(days=days)
 
     def set_password(self, password):
-        """Hash and set password"""
+        """Hashes and sets the user's password."""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        """Check password against hash"""
+        """Checks a password against the stored hash."""
         return check_password_hash(self.password_hash, password)
 
     def update_last_login(self):
-        """Update last login timestamp"""
+        """Updates the last login timestamp."""
         self.last_login = datetime.utcnow()
         db.session.commit()
 
     @property
     def full_name(self):
-        """Get full name"""
+        """Returns the user's full name, or username if not set."""
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.username
 
     def get_task_stats(self):
-        """Get user's task statistics - using direct queries to avoid imports"""
+        """Calculates and returns key statistics about the user's tasks."""
         total_tasks = self.tasks.count()
         completed_tasks = self.tasks.filter_by(status='completed').count()
-        pending_tasks = self.tasks.filter(db.text("status IN ('todo', 'in_progress')")).count()
+        pending_tasks = self.tasks.filter(
+            db.text("status IN ('todo', 'in_progress')")).count()
 
         return {
             'total': total_tasks,
@@ -68,20 +96,21 @@ class User(db.Model):
         }
 
     def to_dict(self, include_sensitive=False):
-        """Convert user to dictionary"""
         data = {
             'id': self.id,
             'public_id': self.public_id,
             'username': self.username,
-            'email': self.email if include_sensitive else None,
+            'email': self.email,  # Made email always visible in this response
             'first_name': self.first_name,
             'last_name': self.last_name,
             'full_name': self.full_name,
+            'phone_number': self.phone_number,  # Added new field
             'avatar_url': self.avatar_url,
             'timezone': self.timezone,
             'theme': self.theme,
+            'subscription_tier': self.subscription_tier,
+            'trial_ends_at': self.trial_ends_at.isoformat() if self.trial_ends_at else None,
             'is_active': self.is_active,
-            'is_verified': self.is_verified,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'last_login': self.last_login.isoformat() if self.last_login else None
         }

@@ -18,30 +18,25 @@ def create_app(config_name='default'):
     jwt.init_app(app)
     limiter.init_app(app)
 
-    # Configure CORS
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": ["*"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
-        }
-    })
+    # Configure CORS for the API
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     # Import models
     with app.app_context():
         from .models.user import User
         from .models.task import Task
+        from .models.project import Project
+        from .models.category import Category
+        from .models.focus_session import FocusSession
 
-    # Register API blueprints
     from .api.auth import bp as auth_bp
     from .api.tasks import bp as tasks_bp
+    from .api.dashboard import bp as dashboard_bp
 
-    # Register blueprint with name='auth' so url_for can find it
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
+    app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
 
-    # Routes
     @app.route('/')
     def landing_page():
         return render_template('landing.html')
@@ -57,33 +52,5 @@ def create_app(config_name='default'):
     @app.route('/dashboard')
     def dashboard_page():
         return render_template('dashboard.html')
-    # API Routes
-
-    @app.route('/api')
-    def api_home():
-        return {'message': 'Planora API is running!', 'version': '1.0.0'}
-
-    @app.route('/health')
-    def health_check():
-        return {'status': 'healthy', 'timestamp': str(datetime.utcnow())}
-
-    # Error handlers
-    @app.errorhandler(404)
-    def not_found(error):
-        return {'error': 'Not found', 'message': 'Endpoint not found'}, 404
-
-    @app.errorhandler(500)
-    def internal_error(error):
-        db.session.rollback()
-        return {'error': 'Internal server error'}, 500
-
-    @app.before_request
-    def handle_preflight():
-        if request.method == "OPTIONS":
-            response = make_response()
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            response.headers.add('Access-Control-Allow-Headers', "*")
-            response.headers.add('Access-Control-Allow-Methods', "*")
-            return response
 
     return app
