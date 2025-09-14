@@ -3,6 +3,9 @@ from flask_cors import CORS
 from datetime import datetime
 from .extensions import db, migrate, jwt, limiter
 from .config import config
+from flask_jwt_extended import JWTManager
+import os
+import logging
 
 
 def create_app(config_name='default'):
@@ -29,13 +32,22 @@ def create_app(config_name='default'):
         from .models.category import Category
         from .models.focus_session import FocusSession
 
+    # Import and register blueprints
     from .api.auth import bp as auth_bp
     from .api.tasks import bp as tasks_bp
     from .api.dashboard import bp as dashboard_bp
+    from .api.projects import bp as projects_bp
+    from .api.categories import bp as categories_bp
+    from .api.ai import bp as ai_bp
+    from .api.profile import bp as profile_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
     app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
+    app.register_blueprint(projects_bp, url_prefix='/api/projects')
+    app.register_blueprint(categories_bp, url_prefix='/api/categories')
+    app.register_blueprint(ai_bp, url_prefix='/api/ai')
+    app.register_blueprint(profile_bp, url_prefix='/api/profile')
 
     @app.route('/')
     def landing_page():

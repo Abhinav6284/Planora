@@ -13,10 +13,5 @@ attrs~=25.3.0
 cryptography~=45.0.5
 redis~=5.3.1
 Booktype~=1.5
-
-<<<<<<< HEAD
-
 pandas~=2.3.1
 Flask-Login~=0.6.3
-=======
->>>>>>> 724e44c07083fdf373ac3d299bd9c3b2da4de062
