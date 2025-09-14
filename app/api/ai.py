@@ -33,8 +33,6 @@ def generate_project_from_goal():
         model = genai.GenerativeModel('gemini-1.5-flash')
 
         # This prompt is crucial. It tells the AI exactly what format to return.
-       # In the generate_project_from_goal function...
-# In the generate_project_from_goal function...
         prompt = """You are an expert mentor and project planner. Your job is to create a structured project roadmap for the user's goal.
           The roadmap should be actionable, realistic, and designed to guide the user step by step like a mentor would.
           The user's goal is: "{goal}"
@@ -110,17 +108,26 @@ def generate_project_from_goal():
         db.session.add(new_project)
         db.session.flush()  # Use flush to get the new_project.id before committing
 
-        # Create the tasks
+        # Create the tasks from both mini and major projects
         today = datetime.utcnow().date()
-        for task_data in plan['tasks']:
-            due_date = today + timedelta(days=task_data['day'] - 1)
+
+        all_tasks = []
+        if 'mini_projects' in plan:
+            for mini_project in plan['mini_projects']:
+                all_tasks.extend(mini_project.get('tasks', []))
+
+        if 'major_projects' in plan:
+            for major_project in plan['major_projects']:
+                all_tasks.extend(major_project.get('tasks', []))
+
+        for task_data in all_tasks:
+            due_date = today + timedelta(days=task_data.get('day', 1) - 1)
             new_task = Task(
-                title=task_data['title'],
+                title=task_data.get('title'),
                 description=task_data.get('description', ''),
                 user_id=user_id,
                 due_date=datetime.combine(due_date, datetime.min.time()),
                 status='todo',
-                # ADD THIS LINE to save the AI's estimate
                 estimated_duration=task_data.get('estimated_duration_minutes')
             )
             # Associate task with the new project

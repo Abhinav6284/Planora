@@ -1,3 +1,12 @@
+from .api.focus_sessions import bp as focus_sessions_bp
+from .api.notes import bp as notes_bp
+from .api.profile import bp as profile_bp
+from .api.ai import bp as ai_bp
+from .api.categories import bp as categories_bp
+from .api.projects import bp as projects_bp
+from .api.dashboard import bp as dashboard_bp
+from .api.tasks import bp as tasks_bp
+from .api.auth import bp as auth_bp
 from flask import Flask, render_template, request, make_response
 from flask_cors import CORS
 from datetime import datetime
@@ -32,16 +41,6 @@ def create_app(config_name='default'):
         from .models.category import Category
         from .models.focus_session import FocusSession
 
-    # Import and register blueprints
-    from .api.auth import bp as auth_bp
-    from .api.tasks import bp as tasks_bp
-    from .api.dashboard import bp as dashboard_bp
-    from .api.projects import bp as projects_bp
-    from .api.categories import bp as categories_bp
-    from .api.ai import bp as ai_bp
-    from .api.profile import bp as profile_bp
-    from .api.notes import bp as notes_bp
-
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
     app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
@@ -50,6 +49,7 @@ def create_app(config_name='default'):
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
     app.register_blueprint(profile_bp, url_prefix='/api/profile')
     app.register_blueprint(notes_bp, url_prefix='/api/notes')
+    app.register_blueprint(focus_sessions_bp, url_prefix='/api/focus_sessions')
 
     @app.route('/')
     def landing_page():
