@@ -15,8 +15,12 @@ def start_session():
     data = request.get_json()
     task_id = data.get('task_id')
 
-    # Duration can be calculated on stop
-    session = FocusSession(user_id=user_id, task_id=task_id, duration=0)
+    session = FocusSession(
+        user_id=user_id,
+        task_id=task_id,
+        duration=0,
+        started_at=datetime.utcnow()  # Make sure to set the start time
+    )
     db.session.add(session)
     db.session.commit()
 

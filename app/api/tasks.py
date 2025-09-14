@@ -130,3 +130,24 @@ def delete_task(task_id):
         logging.error(
             f"Task deletion failed for user {user_id}, task {task_id}. Error: {e}", exc_info=True)
         return jsonify({'success': False, 'message': 'An internal server error occurred.'}), 500
+
+
+@bp.route('/reorder', methods=['PUT'])
+@jwt_required()
+def reorder_tasks():
+    user_id = int(get_jwt_identity())
+    data = request.get_json()
+    task_ids = data.get('task_ids', [])
+
+    try:
+        for index, task_id in enumerate(task_ids):
+            task = Task.query.filter_by(id=task_id, user_id=user_id).first()
+            if task:
+                task.position = index
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Tasks reordered successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(
+            f"Task reordering failed for user {user_id}. Error: {e}", exc_info=True)
+        return jsonify({'success': False, 'message': 'An internal server error occurred.'}), 500

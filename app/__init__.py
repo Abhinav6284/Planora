@@ -40,6 +40,7 @@ def create_app(config_name='default'):
     from .api.categories import bp as categories_bp
     from .api.ai import bp as ai_bp
     from .api.profile import bp as profile_bp
+    from .api.notes import bp as notes_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(tasks_bp, url_prefix='/api/tasks')
@@ -48,6 +49,7 @@ def create_app(config_name='default'):
     app.register_blueprint(categories_bp, url_prefix='/api/categories')
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
     app.register_blueprint(profile_bp, url_prefix='/api/profile')
+    app.register_blueprint(notes_bp, url_prefix='/api/notes')
 
     @app.route('/')
     def landing_page():

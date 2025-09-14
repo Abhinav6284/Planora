@@ -34,66 +34,67 @@ def generate_project_from_goal():
 
         # This prompt is crucial. It tells the AI exactly what format to return.
        # In the generate_project_from_goal function...
-        prompt = f"""You are an expert mentor and project planner. Your job is to create a structured project roadmap for the user's goal.  
-          The roadmap should be actionable, realistic, and designed to guide the user step by step like a mentor would.  
-          The user's goal is: "{goal}"  
-          Please return the response strictly in clean JSON format. Do not include any extra text outside the JSON block.  
-          The JSON must follow this structure:  
-          {
+# In the generate_project_from_goal function...
+        prompt = """You are an expert mentor and project planner. Your job is to create a structured project roadmap for the user's goal.
+          The roadmap should be actionable, realistic, and designed to guide the user step by step like a mentor would.
+          The user's goal is: "{goal}"
+          Please return the response strictly in clean JSON format. Do not include any extra text outside the JSON block.
+          The JSON must follow this structure:
+          {{
             "project_name": "A concise and professional name for the project",
             "project_description": "A brief, one-paragraph summary of the project and its significance",
             "mini_projects": [
-              {
+              {{
                 "title": "A well-thought-out mini project name",
                 "description": "A short description of what this mini project covers and why it's important",
                 "tasks": [
-                  {
+                  {{
                     "title": "A clear, actionable task title",
                     "description": "A detailed description of what needs to be done",
                     "day": 1,
                     "estimated_duration_minutes": 90,
                     "resources": [
-                      {
+                      {{
                         "name": "Resource name",
                         "link": "https://..."
-                      }
+                      }}
                     ]
-                  }
+                  }}
                 ]
-              }
+              }}
             ],
             "major_projects": [
-              {
+              {{
                 "title": "A professional major project name",
                 "description": "One-paragraph explanation of what this project involves and what it demonstrates",
                 "tasks": [
-                  {
+                  {{
                     "title": "A clear, mentor-style task title",
                     "description": "A detailed explanation of the task with actionable steps",
                     "day": 20,
                     "estimated_duration_minutes": 180,
                     "resources": [
-                      {
+                      {{
                         "name": "Documentation or guide",
                         "link": "https://..."
-                      },
-                      {
+                      }},
+                      {{
                         "name": "Video tutorial",
                         "link": "https://..."
-                      }
+                      }}
                     ]
-                  }
+                  }}
                 ]
-              }
+              }}
             ]
-          }
+          }}
 
-          Guidelines:  
-          - Break the roadmap into **mini-projects** (stepping stones for practice) and **major projects** (capstone-style projects).  
-          - Provide **realistic daily tasks** with estimated time in minutes.  
-          - Always include at least one **relevant resource link** (documentation, GitHub repo, or video) for each task.  
-          - Ensure that the roadmap feels like **professional mentorship** — logical progression, building from basics to advanced.  
-          """
+          Guidelines:
+          - Break the roadmap into **mini-projects** (stepping stones for practice) and **major projects** (capstone-style projects).
+          - Provide **realistic daily tasks** with estimated time in minutes.
+          - Always include at least one **relevant resource link** (documentation, GitHub repo, or video) for each task.
+          - Ensure that the roadmap feels like **professional mentorship** — logical progression, building from basics to advanced.
+          """.format(goal=goal)
 
         response = model.generate_content(prompt)
 

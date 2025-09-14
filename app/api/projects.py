@@ -84,15 +84,19 @@ def update_project(project_id):
 @bp.route('/<int:project_id>', methods=['DELETE'])
 @jwt_required()
 def delete_project(project_id):
-    """Delete a project."""
+    """Delete a project and its associated tasks."""
     try:
         user_id = int(get_jwt_identity())
         project = Project.query.filter_by(
             id=project_id, user_id=user_id).first_or_404()
 
+        # Manually delete associated tasks
+        for task in project.tasks:
+            db.session.delete(task)
+
         db.session.delete(project)
         db.session.commit()
-        return jsonify({'success': True, 'message': 'Project deleted successfully'}), 200
+        return jsonify({'success': True, 'message': 'Project and associated tasks deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         logging.error(
