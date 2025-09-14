@@ -44,6 +44,8 @@ MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "true").lower() in ['true', '1', 't']
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    # Override to use SQLite for local development
+    SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(basedir, "..", "users.db")}'
 
 
 class ProductionConfig(Config):
