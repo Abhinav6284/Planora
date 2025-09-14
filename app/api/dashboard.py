@@ -30,19 +30,8 @@ def dashboard_data():
         projects = db.session.query(Project).filter_by(user_id=user_id, status='active').order_by(
             Project.created_at.desc()).all()
 
-        tasks = db.session.query(Task).filter_by(user_id=user_id).filter(
-            Task.status != 'completed').order_by(Task.due_date.asc()).all()
-
-        today = date.today()
-        start_of_month = today.replace(day=1)
-        next_month_start = (start_of_month.replace(
-            day=28) + timedelta(days=4)).replace(day=1)
-
-        calendar_tasks = db.session.query(Task).filter(
-            Task.user_id == user_id,
-            Task.due_date >= start_of_month,
-            Task.due_date < next_month_start
-        ).all()
+        tasks = db.session.query(Task).filter_by(
+            user_id=user_id).order_by(Task.due_date.asc()).all()
 
         # --- Data Preparation ---
         project_data = [{'id': p.id, 'name': p.name,
@@ -53,7 +42,7 @@ def dashboard_data():
                       'project_id': t.projects[0].id if t.projects else None,
                       'estimated_duration': t.estimated_duration} for t in tasks]
         calendar_task_data = [{'id': t.id, 'title': t.title,
-                               'due_date': t.due_date.isoformat()} for t in calendar_tasks]
+                               'start': t.due_date.isoformat()} for t in tasks if t.due_date]
 
         return jsonify({
             'success': True,

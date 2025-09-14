@@ -4,6 +4,7 @@ from .api.profile import bp as profile_bp
 from .api.ai import bp as ai_bp
 from .api.categories import bp as categories_bp
 from .api.projects import bp as projects_bp
+from .api.roadmap import bp as roadmap_bp
 from .api.dashboard import bp as dashboard_bp
 from .api.tasks import bp as tasks_bp
 from .api.auth import bp as auth_bp
@@ -50,6 +51,7 @@ def create_app(config_name='default'):
     app.register_blueprint(profile_bp, url_prefix='/api/profile')
     app.register_blueprint(notes_bp, url_prefix='/api/notes')
     app.register_blueprint(focus_sessions_bp, url_prefix='/api/focus_sessions')
+    app.register_blueprint(roadmap_bp, url_prefix='/api/roadmap')
 
     @app.route('/')
     def landing_page():

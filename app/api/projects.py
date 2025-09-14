@@ -1,7 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from app.models.focus_session import FocusSession
+from app.models.note import Note
 from ..extensions import db
 from ..models.project import Project
+from ..models.task import Task
 import logging
 
 bp = Blueprint('projects', __name__)
@@ -84,19 +88,23 @@ def update_project(project_id):
 @bp.route('/<int:project_id>', methods=['DELETE'])
 @jwt_required()
 def delete_project(project_id):
-    """Delete a project and its associated tasks."""
+    """Delete a project and its associated tasks, notes, and focus sessions."""
     try:
         user_id = int(get_jwt_identity())
         project = Project.query.filter_by(
             id=project_id, user_id=user_id).first_or_404()
 
-        # Manually delete associated tasks
+        # Manually delete associated notes
+        Note.query.filter_by(project_id=project.id).delete()
+
+        # Manually delete associated tasks and their focus sessions
         for task in project.tasks:
+            FocusSession.query.filter_by(task_id=task.id).delete()
             db.session.delete(task)
 
         db.session.delete(project)
         db.session.commit()
-        return jsonify({'success': True, 'message': 'Project and associated tasks deleted successfully'}), 200
+        return jsonify({'success': True, 'message': 'Project and all associated data have been deleted.'}), 200
     except Exception as e:
         db.session.rollback()
         logging.error(
