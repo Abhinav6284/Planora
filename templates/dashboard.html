@@ -314,642 +314,663 @@
 </head>
 
 <body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <h2><i class="fas fa-rocket"></i> Planora</h2>
+            <a href="#" class="nav-item active"><i class="fas fa-home"></i> Overview</a>
+            <a href="#" class="nav-item"><i class="fas fa-briefcase"></i> Projects</a>
+            <a href="#" class="nav-item"><i class="fas fa-check-square"></i> Tasks</a>
+            <a href="/settings" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+            <a href="#" class="nav-item logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
 
-    <body>
-        <div class="dashboard">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <h2><i class="fas fa-rocket"></i> Planora</h2>
-                <a href="#" class="nav-item active"><i class="fas fa-home"></i> Overview</a>
-                <a href="#" class="nav-item"><i class="fas fa-briefcase"></i> Projects</a>
-                <a href="#" class="nav-item"><i class="fas fa-check-square"></i> Tasks</a>
-                <a href="/settings" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
-                <a href="#" class="nav-item logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <div class="main-content">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <p>Welcome back! Here's your project overview.</p>
             </div>
 
-            <!-- Main Content -->
-            <div class="main-content">
-                <div class="header">
-                    <h1>Dashboard</h1>
-                    <p>Welcome back! Here's your project overview.</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Projects</h3>
+                    <div class="value" id="total-projects">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Tasks</h3>
+                    <div class="value" id="active-tasks">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Completed Tasks</h3>
+                    <div class="value" id="completed-tasks">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Tasks</h3>
+                    <div class="value" id="pending-tasks">0</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="main-column">
+                    <div class="content-area">
+                        <div class="content-header">
+                            <h2>Today's Schedule</h2>
+                            <button class="btn" id="add-task-btn"><i class="fas fa-plus"></i> Add Task
+                                Manually</button>
+                        </div>
+                        <table id="today-tasks-table">
+                            <thead>
+                                <tr>
+                                    <th>Task Title</th>
+                                    <th>Project</th>
+                                    <th>Est. Duration</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="today-tasks-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="content-header">
+                            <h2>Calendar</h2>
+                        </div>
+                        <div id="calendar"></div>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="content-header">
+                            <h2>Project Roadmap</h2>
+                        </div>
+                        <div id="roadmap-container" class="roadmap-grid"></div>
+                    </div>
                 </div>
 
-                <!-- Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Total Projects</h3>
-                        <div class="value" id="total-projects">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Active Tasks</h3>
-                        <div class="value" id="active-tasks">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Completed Tasks</h3>
-                        <div class="value" id="completed-tasks">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Pending Tasks</h3>
-                        <div class="value" id="pending-tasks">0</div>
-                    </div>
-                </div>
-
-                <!-- Main Dashboard Grid -->
-                <div class="dashboard-grid">
-                    <!-- Main Column -->
-                    <div class="main-column">
-                        <!-- Today's Schedule -->
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Today's Schedule</h2>
-                                <button class="btn" id="add-task-btn-main"><i class="fas fa-plus"></i> Add Task
-                                    Manually</button>
-                            </div>
-                            <table id="today-tasks-table">
-                                <thead>
-                                    <tr>
-                                        <th>Task Title</th>
-                                        <th>Project</th>
-                                        <th>Est. Duration</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="today-tasks-body"></tbody>
-                            </table>
-                        </div>
-
-                        <!-- Calendar -->
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Calendar</h2>
-                            </div>
-                            <div id="calendar"></div>
-                        </div>
-
-                        <!-- Project Roadmap -->
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Project Roadmap</h2>
-                            </div>
-                            <div id="roadmap-container" class="roadmap-grid"></div>
-                        </div>
+                <div class="side-column">
+                    <div class="content-area focus-timer">
+                        <h2>Focus Timer</h2>
+                        <div id="timer-display">25:00</div>
+                        <select id="focus-task-select"></select>
+                        <button class="btn" id="start-timer-btn" style="margin-top: 15px;">Start Focus</button>
                     </div>
 
-                    <!-- Side Column -->
-                    <div class="side-column">
-                        <!-- Focus Timer -->
-                        <div class="content-area focus-timer">
-                            <h2>Focus Timer</h2>
-                            <div id="timer-display">25:00</div>
-                            <select id="focus-task-select"></select>
-                            <button class="btn" id="start-timer-btn" style="margin-top: 15px;">Start Focus</button>
+                    <div class="content-area">
+                        <div class="content-header">
+                            <h2>Projects</h2>
+                            <button class="btn" id="add-project-btn"><i class="fas fa-magic"></i> Generate with
+                                AI</button>
                         </div>
+                        <table id="projects-table">
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
 
-                        <!-- Projects -->
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Projects</h2>
-                                <button class="btn" id="add-project-btn"><i class="fas fa-magic"></i> Generate with
-                                    AI</button>
+                    <div class="content-area">
+                        <div class="content-header">
+                            <h2>Tasks Overview</h2>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <select id="project-filter" class="form-control">
+                                    <option value="all">All Projects</option>
+                                </select>
                             </div>
-                            <table id="projects-table">
-                                <thead>
-                                    <tr>
-                                        <th>Project Name</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
                         </div>
+                        <table id="side-tasks-table"></table>
+                    </div>
 
-                        <!-- Task Filter + Add -->
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Tasks Overview</h2>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <select id="project-filter" class="form-control">
-                                        <option value="all">All Projects</option>
-                                    </select>
-                                    <button class="btn" id="add-task-btn-side"><i class="fas fa-plus"></i> Add
-                                        Task</button>
-                                </div>
-                            </div>
-                            <table id="side-tasks-table"></table>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="content-area">
-                            <h2>Notes</h2>
-                            <select id="notes-project-select" class="form-control"></select>
-                            <textarea id="notes-area" rows="10"></textarea>
-                            <button class="btn" id="save-notes-btn" style="margin-top: 10px;">Save Notes</button>
-                        </div>
+                    <div class="content-area">
+                        <h2>Notes</h2>
+                        <select id="notes-project-select" class="form-control"></select>
+                        <textarea id="notes-area" rows="10"></textarea>
+                        <button class="btn" id="save-notes-btn" style="margin-top: 10px;">Save Notes</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Toast Notification -->
-        <div id="toast-notification" class="toast"></div>
+    <div id="toast-notification" class="toast"></div>
 
-        <!-- Project Modal -->
-        <div id="project-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" id="close-project-modal">&times;</span>
-                <h2>Generate a New Project Plan</h2>
-                <form id="project-form">
-                    <label for="project-goal">Describe your goal, and our AI will create a roadmap for you:</label>
-                    <textarea id="project-goal" rows="4"
-                        placeholder="e.g., Learn Flask and build a personal blog website in 2 weeks"></textarea>
-                    <button type="submit" class="btn" id="generate-btn">
-                        <span id="generate-btn-text">Generate Plan</span>
-                        <span id="generate-spinner" style="display:none;">Generating...</span>
-                    </button>
-                </form>
-            </div>
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-project-modal">&times;</span>
+            <h2>Generate a New Project Plan</h2>
+            <form id="project-form">
+                <label for="project-goal">Describe your goal, and our AI will create a roadmap for you:</label>
+                <textarea id="project-goal" rows="4"
+                    placeholder="e.g., Learn Flask and build a personal blog website in 2 weeks"></textarea>
+                <button type="submit" class="btn" id="generate-btn">
+                    <span id="generate-btn-text">Generate Plan</span>
+                    <span id="generate-spinner" style="display:none;">Generating...</span>
+                </button>
+            </form>
         </div>
+    </div>
 
-        <!-- Task Modal -->
-        <div id="task-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" id="close-task-modal">&times;</span>
-                <h2>Create New Task</h2>
-                <form id="task-form">
-                    <label for="task-title">Task Title:</label>
-                    <input type="text" id="task-title" required>
-                    <label for="task-project">Assign to Project:</label>
-                    <select id="task-project" required></select>
-                    <label for="task-due-date">Due Date:</label>
-                    <input type="date" id="task-due-date">
-                    <button type="submit" class="btn">Create Task</button>
-                </form>
-            </div>
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-task-modal">&times;</span>
+            <h2>Create New Task</h2>
+            <form id="task-form">
+                <label for="task-title">Task Title:</label>
+                <input type="text" id="task-title" required>
+                <label for="task-project">Assign to Project:</label>
+                <select id="task-project" required></select>
+                <label for="task-due-date">Due Date:</label>
+                <input type="date" id="task-due-date">
+                <button type="submit" class="btn">Create Task</button>
+            </form>
         </div>
-        <script>
-            const token = localStorage.getItem('planora_token');
-            let allProjects = [];
-            let allTasks = [];
-            let calendar;
+    </div>
+    <script>
+        const token = localStorage.getItem('planora_token');
+        let allProjects = [];
+        let allTasks = [];
+        let calendar;
 
-            const notesArea = document.getElementById('notes-area');
-            const notesProjectSelect = document.getElementById('notes-project-select');
+        const notesArea = document.getElementById('notes-area');
+        const notesProjectSelect = document.getElementById('notes-project-select');
 
-            // -----------------------------
-            // Utility Functions
-            // -----------------------------
-            function showToast(message, type = 'success') {
-                const toast = document.getElementById('toast-notification');
-                toast.textContent = message;
-                toast.className = `toast show ${type}`;
-                setTimeout(() => {
-                    toast.className = toast.className.replace('show', '');
-                }, 3000);
+        // -----------------------------
+        // Utility Functions
+        // -----------------------------
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast-notification');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
+        }
+
+        // -----------------------------
+        // Auth + Initialization
+        // -----------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!token) {
+                window.location.href = '/login';
+                return;
             }
+            initializeCalendar();
+            loadDashboardData();
+            setupEventListeners();
+        });
 
-            // -----------------------------
-            // Auth + Initialization
-            // -----------------------------
-            document.addEventListener('DOMContentLoaded', () => {
-                if (!token) {
-                    window.location.href = '/login';
+        function setupEventListeners() {
+            document.getElementById('add-project-btn').onclick = () =>
+                (document.getElementById('project-modal').style.display = 'block');
+
+            document.getElementById('add-task-btn').onclick = () =>
+                (document.getElementById('task-modal').style.display = 'block');
+
+            document.getElementById('close-project-modal').onclick = () =>
+                (document.getElementById('project-modal').style.display = 'none');
+
+            document.getElementById('close-task-modal').onclick = () =>
+                (document.getElementById('task-modal').style.display = 'none');
+
+            window.onclick = (event) => {
+                if (event.target == document.getElementById('project-modal'))
+                    document.getElementById('project-modal').style.display = 'none';
+                if (event.target == document.getElementById('task-modal'))
+                    document.getElementById('task-modal').style.display = 'none';
+            };
+
+            document
+                .getElementById('project-form')
+                .addEventListener('submit', createProjectWithAI);
+            document
+                .getElementById('task-form')
+                .addEventListener('submit', createTaskManually);
+
+            document.getElementById('logout-btn').onclick = () => {
+                localStorage.removeItem('planora_token');
+                window.location.href = '/login';
+            };
+
+            document
+                .getElementById('start-timer-btn')
+                .addEventListener('click', () => {
+                    if (isTimerRunning) stopTimer();
+                    else startTimer();
+                });
+
+            document.getElementById('save-notes-btn').addEventListener('click', saveNotes);
+        }
+
+        // -----------------------------
+        // AI & CRUD Functions
+        // -----------------------------
+        async function createProjectWithAI(e) {
+            e.preventDefault();
+            const goal = document.getElementById('project-goal').value;
+            try {
+                const response = await fetch('/api/ai/generate-project', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ goal })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('AI project generated successfully!', 'success');
+                    loadDashboardData();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Could not generate AI project.', 'error');
+            }
+        }
+
+        async function createTaskManually(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const projectId = document.getElementById('task-project').value;
+            const dueDate = document.getElementById('task-due-date').value;
+
+            const newTask = {
+                title,
+                project_id: projectId,
+                due_date: dueDate,
+                estimated_duration: 60, // default 1hr
+            };
+
+            const overlappingTask = checkForTaskOverlap(newTask);
+            if (overlappingTask) {
+                if (
+                    !confirm(
+                        `This task may overlap with "${overlappingTask.title}". Do you want to create it anyway?`
+                    )
+                ) {
                     return;
                 }
-                initializeCalendar();
-                loadDashboardData();
-                setupEventListeners();
-            });
-
-            function setupEventListeners() {
-                document.getElementById('add-project-btn').onclick = () =>
-                    (document.getElementById('project-modal').style.display = 'block');
-
-                document.getElementById('add-task-btn-main').onclick = () =>
-                    (document.getElementById('task-modal').style.display = 'block');
-
-                document.getElementById('add-task-btn-side').onclick = () =>
-                    (document.getElementById('task-modal').style.display = 'block');
-
-                document.getElementById('close-project-modal').onclick = () =>
-                    (document.getElementById('project-modal').style.display = 'none');
-
-                document.getElementById('close-task-modal').onclick = () =>
-                    (document.getElementById('task-modal').style.display = 'none');
-
-                window.onclick = (event) => {
-                    if (event.target == document.getElementById('project-modal'))
-                        document.getElementById('project-modal').style.display = 'none';
-                    if (event.target == document.getElementById('task-modal'))
-                        document.getElementById('task-modal').style.display = 'none';
-                };
-
-                document
-                    .getElementById('project-form')
-                    .addEventListener('submit', createProjectWithAI);
-                document
-                    .getElementById('task-form')
-                    .addEventListener('submit', createTaskManually);
-
-                document.getElementById('logout-btn').onclick = () => {
-                    localStorage.removeItem('planora_token');
-                    window.location.href = '/login';
-                };
-
-                document
-                    .getElementById('start-timer-btn')
-                    .addEventListener('click', () => {
-                        if (isTimerRunning) stopTimer();
-                        else startTimer();
-                    });
-
-                document.getElementById('save-notes-btn').addEventListener('click', saveNotes);
             }
 
-            // -----------------------------
-            // AI & CRUD Functions
-            // -----------------------------
-            async function createProjectWithAI(e) {
-                e.preventDefault();
-                // TODO: Implement backend call to your AI API
-                showToast('AI project generation not yet implemented.', 'error');
-            }
-
-            async function createTaskManually(e) {
-                e.preventDefault();
-                const title = document.getElementById('task-title').value;
-                const projectId = document.getElementById('task-project').value;
-                const dueDate = document.getElementById('task-due-date').value;
-
-                const newTask = {
-                    title,
-                    project_id: projectId,
-                    due_date: dueDate,
-                    estimated_duration: 60, // default 1hr
-                };
-
-                const overlappingTask = checkForTaskOverlap(newTask);
-                if (overlappingTask) {
-                    if (
-                        !confirm(
-                            `This task may overlap with "${overlappingTask.title}". Do you want to create it anyway?`
-                        )
-                    ) {
-                        return;
-                    }
-                }
-
-                // TODO: Implement backend POST request for creating task
-                showToast('Manual task creation not yet implemented.', 'error');
-            }
-
-            // -----------------------------
-            // Data Loading + Rendering
-            // -----------------------------
-            async function loadDashboardData() {
-                try {
-                    const response = await fetch('/api/dashboard/data', {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    const result = await response.json();
-
-                    if (response.ok && result.success) {
-                        const { user, stats, projects, tasks } = result.data;
-                        allProjects = projects;
-                        allTasks = tasks;
-                        renderUI(user, stats, projects, tasks);
-                    } else {
-                        if (response.status === 401 || response.status === 422)
-                            window.location.href = '/login';
-                        else showToast(result.message, 'error');
-                    }
-                } catch (error) {
-                    showToast('Could not connect to the server.', 'error');
-                }
-            }
-
-            function renderUI(user, stats, projects, tasks) {
-                document.querySelector(
-                    '.header p'
-                ).textContent = `Welcome back, ${user.first_name}! Let's get productive.`;
-
-                document.getElementById('total-projects').textContent = projects.length;
-                document.getElementById('active-tasks').textContent = tasks.length;
-                document.getElementById('completed-tasks').textContent =
-                    stats.completed_tasks;
-                document.getElementById('pending-tasks').textContent = stats.pending_tasks;
-
-                renderProjects(projects);
-                renderTaskTables(tasks);
-                populateProjectDropdowns(projects, tasks);
-                updateCalendarEvents(tasks);
-                renderRoadmap(projects);
-            }
-
-            function renderProjects(projects) {
-                const projectsTableBody = document.querySelector('#projects-table tbody');
-                projectsTableBody.innerHTML = '';
-                projects.forEach((p) => {
-                    const row = projectsTableBody.insertRow();
-                    row.innerHTML = `<td>${p.name}</td>
-      <td><button class="btn" onclick="deleteProject(${p.id}, '${p.name}')">Delete</button></td>`;
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newTask)
                 });
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Task created successfully!', 'success');
+                    loadDashboardData();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Could not create task.', 'error');
             }
+        }
 
-            function renderTaskTables(tasks) {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+        // -----------------------------
+        // Data Loading + Rendering
+        // -----------------------------
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/dashboard/data', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const result = await response.json();
 
-                const todayTasksBody = document.querySelector('#today-tasks-body');
-                todayTasksBody.innerHTML = '';
+                if (response.ok && result.success) {
+                    const { user, stats, projects, tasks } = result.data;
+                    allProjects = projects;
+                    allTasks = tasks;
+                    renderUI(user, stats, projects, tasks);
+                } else {
+                    if (response.status === 401 || response.status === 422)
+                        window.location.href = '/login';
+                    else showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Could not connect to the server.', 'error');
+            }
+        }
 
-                tasks.forEach((t) => {
-                    const dueDate = t.due_date ? new Date(t.due_date) : null;
-                    if (dueDate && dueDate.getTime() === today.getTime()) {
-                        const row = todayTasksBody.insertRow();
-                        row.dataset.taskId = t.id;
-                        const project = allProjects.find((p) => p.id === t.project_id) || {
-                            name: 'N/A',
-                        };
-                        row.innerHTML = `
+        function renderUI(user, stats, projects, tasks) {
+            document.querySelector(
+                '.header p'
+            ).textContent = `Welcome back, ${user.first_name}! Let's get productive.`;
+
+            document.getElementById('total-projects').textContent = projects.length;
+            document.getElementById('active-tasks').textContent = tasks.length;
+            document.getElementById('completed-tasks').textContent =
+                stats.completed_tasks;
+            document.getElementById('pending-tasks').textContent = stats.pending_tasks;
+
+            renderProjects(projects);
+            renderTaskTables(tasks);
+            populateProjectDropdowns(projects, tasks);
+            updateCalendarEvents(tasks);
+            renderRoadmap(projects);
+        }
+
+        function renderProjects(projects) {
+            const projectsTableBody = document.querySelector('#projects-table tbody');
+            projectsTableBody.innerHTML = '';
+            projects.forEach((p) => {
+                const row = projectsTableBody.insertRow();
+                row.innerHTML = `<td>${p.name}</td>
+      <td><button class="btn" onclick="deleteProject(${p.id}, '${p.name}')">Delete</button></td>`;
+            });
+        }
+
+        function renderTaskTables(tasks) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const todayTasksBody = document.querySelector('#today-tasks-body');
+            todayTasksBody.innerHTML = '';
+
+            tasks.forEach((t) => {
+                const dueDate = t.due_date ? new Date(t.due_date) : null;
+                if (dueDate && dueDate.getTime() === today.getTime()) {
+                    const row = todayTasksBody.insertRow();
+                    row.dataset.taskId = t.id;
+                    const project = allProjects.find((p) => p.id === t.project_id) || {
+                        name: 'N/A',
+                    };
+                    row.innerHTML = `
         <td>${t.title}</td>
         <td>${project.name}</td>
         <td>${t.estimated_duration ? t.estimated_duration + ' min' : 'N/A'}</td>
         <td>${t.status}</td>
         <td><button class="btn" onclick="deleteTask(${t.id}, '${t.title}')">Delete</button></td>
       `;
-                    }
-                });
+                }
+            });
 
-                initializeSortable();
-            }
+            initializeSortable();
+        }
 
-            function renderRoadmap(projects) {
-                const roadmapContainer = document.getElementById('roadmap-container');
-                roadmapContainer.innerHTML = '';
-                projects.forEach((project) => {
-                    const card = document.createElement('div');
-                    card.className = 'roadmap-card';
-                    card.innerHTML = `
+        function renderRoadmap(projects) {
+            const roadmapContainer = document.getElementById('roadmap-container');
+            roadmapContainer.innerHTML = '';
+            projects.forEach((project) => {
+                const card = document.createElement('div');
+                card.className = 'roadmap-card';
+                card.innerHTML = `
       <h3>${project.name}</h3>
       <p>${project.description || 'No description'}</p>
     `;
-                    roadmapContainer.appendChild(card);
-                });
-            }
+                roadmapContainer.appendChild(card);
+            });
+        }
 
-            function populateProjectDropdowns(projects, tasks) {
-                const taskProjectSelect = document.getElementById('task-project');
-                const focusTaskSelect = document.getElementById('focus-task-select');
-
-                taskProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
-                focusTaskSelect.innerHTML =
-                    '<option value="">-- Select Task to Focus On --</option>';
-                notesProjectSelect.innerHTML =
-                    '<option value="">-- Select Project for Notes --</option>';
-
-                projects.forEach((p) => {
-                    const option = document.createElement('option');
-                    option.value = p.id;
-                    option.textContent = p.name;
-                    taskProjectSelect.appendChild(option.cloneNode(true));
-                    notesProjectSelect.appendChild(option.cloneNode(true));
-                });
-
-                tasks.forEach((t) => {
-                    const option = document.createElement('option');
-                    option.value = t.id;
-                    option.textContent = t.title;
-                    focusTaskSelect.appendChild(option);
-                });
-            }
-
-            // -----------------------------
-            // Task Overlap Check
-            // -----------------------------
-            function checkForTaskOverlap(newTask) {
-                for (const task of allTasks) {
-                    if (task.due_date && newTask.due_date) {
-                        const taskStart = new Date(task.due_date).getTime();
-                        const newTaskStart = new Date(newTask.due_date).getTime();
-                        const taskEnd = taskStart + (task.estimated_duration || 0) * 60000;
-                        const newTaskEnd =
-                            newTaskStart + (newTask.estimated_duration || 0) * 60000;
-
-                        if (newTaskStart < taskEnd && newTaskEnd > taskStart) {
-                            return task;
-                        }
-                    }
-                }
-                return null;
-            }
-
-            // -----------------------------
-            // Calendar Functions
-            // -----------------------------
-            function initializeCalendar() {
-                const calendarEl = document.getElementById('calendar');
-                calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek',
-                    },
-                    events: [],
-                });
-                calendar.render();
-            }
-
-            function updateCalendarEvents(tasks) {
-                const calendarEvents = tasks.map((task) => ({
-                    title: task.title,
-                    start: task.due_date,
-                    allDay: true,
-                }));
-                calendar.getEventSources().forEach((source) => source.remove());
-                calendar.addEventSource(calendarEvents);
-            }
-
-            // -----------------------------
-            // Focus Timer
-            // -----------------------------
-            const timerDisplay = document.getElementById('timer-display');
-            const startTimerBtn = document.getElementById('start-timer-btn');
+        function populateProjectDropdowns(projects, tasks) {
+            const taskProjectSelect = document.getElementById('task-project');
             const focusTaskSelect = document.getElementById('focus-task-select');
 
-            let timer;
-            let timeRemaining = 25 * 60;
-            let isTimerRunning = false;
-            let currentSessionId = null;
+            taskProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
+            focusTaskSelect.innerHTML =
+                '<option value="">-- Select Task to Focus On --</option>';
+            notesProjectSelect.innerHTML =
+                '<option value="">-- Select Project for Notes --</option>';
 
-            function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
-                    .toString()
-                    .padStart(2, '0')}`;
-            }
+            projects.forEach((p) => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = p.name;
+                taskProjectSelect.appendChild(option.cloneNode(true));
+                notesProjectSelect.appendChild(option.cloneNode(true));
+            });
 
-            async function startTimer() {
-                if (isTimerRunning) return;
+            tasks.forEach((t) => {
+                const option = document.createElement('option');
+                option.value = t.id;
+                option.textContent = t.title;
+                focusTaskSelect.appendChild(option);
+            });
+        }
 
-                const taskId = focusTaskSelect.value;
-                if (!taskId) {
-                    showToast('Please select a task to focus on.', 'error');
-                    return;
-                }
+        // -----------------------------
+        // Task Overlap Check
+        // -----------------------------
+        function checkForTaskOverlap(newTask) {
+            for (const task of allTasks) {
+                if (task.due_date && newTask.due_date) {
+                    const taskStart = new Date(task.due_date).getTime();
+                    const newTaskStart = new Date(newTask.due_date).getTime();
+                    const taskEnd = taskStart + (task.estimated_duration || 0) * 60000;
+                    const newTaskEnd =
+                        newTaskStart + (newTask.estimated_duration || 0) * 60000;
 
-                try {
-                    const response = await fetch('/api/focus_sessions/start', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({ task_id: taskId }),
-                    });
-
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        currentSessionId = result.session_id;
-                        isTimerRunning = true;
-                        startTimerBtn.textContent = 'Stop Focus';
-                        timer = setInterval(updateTimer, 1000);
-                        showToast('Focus session started!', 'success');
-                    } else {
-                        showToast(result.message, 'error');
+                    if (newTaskStart < taskEnd && newTaskEnd > taskStart) {
+                        return task;
                     }
-                } catch (error) {
-                    showToast('Could not start the session.', 'error');
                 }
             }
+            return null;
+        }
 
-            async function stopTimer() {
-                if (!isTimerRunning) return;
+        // -----------------------------
+        // Calendar Functions
+        // -----------------------------
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek',
+                },
+                events: [],
+            });
+            calendar.render();
+        }
 
-                clearInterval(timer);
-                isTimerRunning = false;
-                startTimerBtn.textContent = 'Start Focus';
+        function updateCalendarEvents(tasks) {
+            const calendarEvents = tasks.map((task) => ({
+                title: task.title,
+                start: task.due_date,
+                allDay: true,
+            }));
+            calendar.getEventSources().forEach((source) => source.remove());
+            calendar.addEventSource(calendarEvents);
+        }
 
-                try {
-                    const response = await fetch(`/api/focus_sessions/${currentSessionId}/stop`, {
-                        method: 'POST',
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
+        // -----------------------------
+        // Focus Timer
+        // -----------------------------
+        const timerDisplay = document.getElementById('timer-display');
+        const startTimerBtn = document.getElementById('start-timer-btn');
+        const focusTaskSelect = document.getElementById('focus-task-select');
 
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        showToast('Focus session stopped!', 'success');
-                    } else {
-                        showToast(result.message, 'error');
-                    }
-                } catch (error) {
-                    showToast('Could not stop the session.', 'error');
-                } finally {
-                    timeRemaining = 25 * 60;
-                    timerDisplay.textContent = formatTime(timeRemaining);
-                    currentSessionId = null;
-                }
+        let timer;
+        let timeRemaining = 25 * 60;
+        let isTimerRunning = false;
+        let currentSessionId = null;
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+                .toString()
+                .padStart(2, '0')}`;
+        }
+
+        async function startTimer() {
+            if (isTimerRunning) return;
+
+            const taskId = focusTaskSelect.value;
+            if (!taskId) {
+                showToast('Please select a task to focus on.', 'error');
+                return;
             }
 
-            function updateTimer() {
-                timeRemaining--;
+            try {
+                const response = await fetch('/api/focus_sessions/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        task_id: taskId
+                    }),
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    currentSessionId = result.session_id;
+                    isTimerRunning = true;
+                    startTimerBtn.textContent = 'Stop Focus';
+                    timer = setInterval(updateTimer, 1000);
+                    showToast('Focus session started!', 'success');
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Could not start the session.', 'error');
+            }
+        }
+
+        async function stopTimer() {
+            if (!isTimerRunning) return;
+
+            clearInterval(timer);
+            isTimerRunning = false;
+            startTimerBtn.textContent = 'Start Focus';
+
+            try {
+                const response = await fetch(`/api/focus_sessions/${currentSessionId}/stop`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    showToast('Focus session stopped!', 'success');
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Could not stop the session.', 'error');
+            } finally {
+                timeRemaining = 25 * 60;
                 timerDisplay.textContent = formatTime(timeRemaining);
+                currentSessionId = null;
+            }
+        }
 
-                if (timeRemaining <= 0) {
-                    stopTimer();
-                    alert("Time's up! Take a short break.");
-                }
+        function updateTimer() {
+            timeRemaining--;
+            timerDisplay.textContent = formatTime(timeRemaining);
+
+            if (timeRemaining <= 0) {
+                stopTimer();
+                alert("Time's up! Take a short break.");
+            }
+        }
+
+        // -----------------------------
+        // Notes Logic
+        // -----------------------------
+        async function saveNotes() {
+            const content = notesArea.value;
+            const projectId = notesProjectSelect.value;
+
+            if (!projectId) {
+                showToast('Please select a project for your notes.', 'error');
+                return;
             }
 
-            // -----------------------------
-            // Notes Logic
-            // -----------------------------
-            async function saveNotes() {
-                const content = notesArea.value;
-                const projectId = notesProjectSelect.value;
-
-                if (!projectId) {
-                    showToast('Please select a project for your notes.', 'error');
-                    return;
+            try {
+                const response = await fetch('/api/notes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        content,
+                        project_id: projectId
+                    }),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Notes saved successfully!', 'success');
+                } else {
+                    showToast(result.message, 'error');
                 }
+            } catch (error) {
+                showToast('Could not save notes.', 'error');
+            }
+        }
 
+        // -----------------------------
+        // Delete Functions
+        // -----------------------------
+        async function deleteTask(taskId, taskName) {
+            const confirmation = prompt(
+                `To delete this task, please type its name: "${taskName}"`
+            );
+            if (confirmation === taskName) {
                 try {
-                    const response = await fetch('/api/notes', {
-                        method: 'POST',
+                    const response = await fetch(`/api/tasks/${taskId}`, {
+                        method: 'DELETE',
                         headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
+                            Authorization: `Bearer ${token}`
                         },
-                        body: JSON.stringify({ content, project_id: projectId }),
                     });
                     const result = await response.json();
                     if (response.ok) {
-                        showToast('Notes saved successfully!', 'success');
+                        showToast(result.message, 'success');
+                        loadDashboardData();
                     } else {
                         showToast(result.message, 'error');
                     }
                 } catch (error) {
-                    showToast('Could not save notes.', 'error');
+                    showToast('A network error occurred.', 'error');
                 }
+            } else if (confirmation !== null) {
+                showToast('The name you entered is incorrect.', 'error');
             }
+        }
 
-            // -----------------------------
-            // Delete Functions
-            // -----------------------------
-            async function deleteTask(taskId, taskName) {
-                const confirmation = prompt(
-                    `To delete this task, please type its name: "${taskName}"`
-                );
-                if (confirmation === taskName) {
-                    try {
-                        const response = await fetch(`/api/tasks/${taskId}`, {
-                            method: 'DELETE',
-                            headers: { Authorization: `Bearer ${token}` },
-                        });
-                        const result = await response.json();
-                        if (response.ok) {
-                            showToast(result.message, 'success');
-                            loadDashboardData();
-                        } else {
-                            showToast(result.message, 'error');
-                        }
-                    } catch (error) {
-                        showToast('A network error occurred.', 'error');
+        async function deleteProject(projectId, projectName) {
+            const confirmation = prompt(
+                `To delete this project, please type its name: "${projectName}"`
+            );
+            if (confirmation === projectName) {
+                try {
+                    const response = await fetch(`/api/projects/${projectId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast(result.message, 'success');
+                        loadDashboardData();
+                    } else {
+                        showToast(result.message, 'error');
                     }
-                } else if (confirmation !== null) {
-                    showToast('The name you entered is incorrect.', 'error');
+                } catch (error) {
+                    showToast('A network error occurred.', 'error');
                 }
+            } else if (confirmation !== null) {
+                showToast('The name you entered is incorrect.', 'error');
             }
-
-            async function deleteProject(projectId, projectName) {
-                const confirmation = prompt(
-                    `To delete this project, please type its name: "${projectName}"`
-                );
-                if (confirmation === projectName) {
-                    try {
-                        const response = await fetch(`/api/projects/${projectId}`, {
-                            method: 'DELETE',
-                            headers: { Authorization: `Bearer ${token}` },
-                        });
-                        const result = await response.json();
-                        if (response.ok) {
-                            showToast(result.message, 'success');
-                            loadDashboardData();
-                        } else {
-                            showToast(result.message, 'error');
-                        }
-                    } catch (error) {
-                        showToast('A network error occurred.', 'error');
-                    }
-                } else if (confirmation !== null) {
-                    showToast('The name you entered is incorrect.', 'error');
-                }
-            }
-        </script>
-    </body>
-
+        }
+    </script>
 </body>
 
 </html>
