@@ -100,10 +100,19 @@ def update_task(task_id):
             task.due_date = datetime.fromisoformat(data['due_date'].replace(
                 'Z', '+00:00')) if data.get('due_date') else None
 
+        if 'project_id' in data:
+            project = Project.query.filter_by(
+                id=data['project_id'], user_id=user_id).first()
+            if project:
+                task.projects = [project]
+            else:
+                return jsonify({'success': False, 'message': 'Project not found or you do not have permission.'}), 404
+
         if data.get('status') == 'completed':
             task.mark_completed()
 
         db.session.commit()
+
         return jsonify({'success': True, 'message': 'Task updated', 'data': {'task': task.to_dict()}}), 200
 
     except Exception as e:

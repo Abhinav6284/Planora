@@ -14,9 +14,6 @@ def get_notes():
     return jsonify({'success': True, 'data': {'notes': [{'id': note.id, 'content': note.content} for note in notes]}}), 200
 
 
-bp = Blueprint('notes', __name__)
-
-
 @bp.route('', methods=['POST'])
 @jwt_required()
 def create_note():

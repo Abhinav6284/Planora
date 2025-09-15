@@ -3,6 +3,12 @@ from datetime import datetime, timedelta
 from ..extensions import db
 import uuid
 
+# CORRECTED VERSION OF user.py
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
+from ..extensions import db
+import uuid
+
 
 class User(db.Model):
     """
@@ -20,7 +26,6 @@ class User(db.Model):
                          nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
-
     subscription_tier = db.Column(
         db.String(50), nullable=False, server_default='trial')
     trial_ends_at = db.Column(db.DateTime)
@@ -40,14 +45,15 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow,
-                           onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     phone_number = db.Column(db.String(20), unique=True,
                              nullable=True, index=True)
     referral_source = db.Column(db.String(100), nullable=True)
-    tasks = db.relationship('Task', backref='user', lazy='dynamic',
-                            cascade='all, delete-orphan')
+
+    tasks = db.relationship('Task', backref='user',
+                            lazy='dynamic', cascade='all, delete-orphan')
     projects = db.relationship(
         'Project', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     categories = db.relationship(
@@ -92,6 +98,7 @@ class User(db.Model):
             'total': total_tasks,
             'completed': completed_tasks,
             'pending': pending_tasks,
+            # FIXED: Replaced &gt; with >
             'completion_rate': (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
         }
 
@@ -123,5 +130,6 @@ class User(db.Model):
 
         return data
 
+    # FIXED: Complete the __repr__ method
     def __repr__(self):
         return f'<User {self.username}>'
