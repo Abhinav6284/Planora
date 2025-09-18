@@ -1,3 +1,6 @@
+from flask import session
+from ..extensions import db, oauth
+from flask import Blueprint, request, jsonify, url_for, redirect
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime
@@ -103,13 +106,11 @@ def login():
             f"Login failed for identifier: {data.get('login_identifier')}. Error: {e}", exc_info=True)
         return jsonify({'success': False, 'message': 'Login failed due to an internal server error.'}), 500
 
-# You should also keep the /me endpoint for fetching user data
-
 
 @bp.route('/me', methods=['GET'])
 @jwt_required()
 def get_current_user():
-    # ... (get_current_user logic remains the same)
+
     user_id_str = get_jwt_identity()
     user = User.query.get(int(user_id_str))
     if not user:
@@ -121,3 +122,88 @@ def get_current_user():
             'stats': user.get_task_stats()
         }
     }), 200
+
+
+@bp.route('/login/google')
+def google_login():
+    redirect_uri = url_for('auth.google_authorize', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@bp.route('/authorize/google')
+def google_authorize():
+    token = oauth.google.authorize_access_token()
+
+    nonce = session.get('google_nonce')
+    user_info = oauth.google.parse_id_token(token, nonce=nonce)
+
+    google_id = user_info['sub']
+    user = User.query.filter_by(google_id=google_id).first()
+
+    if not user:
+        user = User.query.filter_by(email=user_info['email']).first()
+        if not user:
+            user = User(
+                google_id=google_id,
+                email=user_info['email'],
+                first_name=user_info.get('given_name'),
+                last_name=user_info.get('family_name'),
+                username=user_info.get('email').split(
+                    '@')[0],  # Or generate a unique username
+                avatar_url=user_info.get('picture')
+            )
+            db.session.add(user)
+        else:
+            user.google_id = google_id
+        db.session.commit()
+
+    access_token = create_access_token(identity=str(user.id))
+    # Redirect to the dashboard with the token
+    return redirect(f'/dashboard?token={access_token}')
+
+
+@bp.route('/login/github')
+def github_login():
+    redirect_uri = url_for('auth.github_authorize', _external=True)
+
+    # --- ADD THIS LINE FOR DEBUGGING ---
+    print(f"--- GitHub Redirect URI --- : {redirect_uri}")
+
+    return oauth.github.authorize_redirect(redirect_uri)
+
+
+@bp.route('/authorize/github')
+def github_authorize():
+    token = oauth.github.authorize_access_token()
+    resp = oauth.github.get('user', token=token)
+    profile = resp.json()
+
+    github_id = str(profile['id'])
+    user = User.query.filter_by(github_id=github_id).first()
+
+    if not user:
+        user_email = profile.get('email')
+
+        # If the user has an email, check if an account with that email already exists
+        if user_email:
+            user = User.query.filter_by(email=user_email).first()
+
+        if not user:
+            # Create a new user if no existing user is found
+            user = User(
+                github_id=github_id,
+                email=user_email,  # This can now be None
+                username=profile.get('login'),
+                first_name=profile.get('name', '').split(' ')[0],
+                last_name=' '.join(profile.get('name', '').split(' ')[1:]),
+                avatar_url=profile.get('avatar_url')
+            )
+            db.session.add(user)
+        else:
+            # If a user with that email exists, link their GitHub ID to it
+            user.github_id = github_id
+
+        db.session.commit()
+
+    access_token = create_access_token(identity=str(user.id))
+    return redirect(f'/dashboard?token={access_token}')

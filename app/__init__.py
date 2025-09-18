@@ -1,3 +1,4 @@
+# abhinav6284/planora/Planora-4ab166033a1dad0a7ca4cb76b7b906a7dd5dfb66/app/__init__.py
 from .api.focus_sessions import bp as focus_sessions_bp
 from .api.notes import bp as notes_bp
 from .api.profile import bp as profile_bp
@@ -11,7 +12,7 @@ from .api.auth import bp as auth_bp
 from flask import Flask, render_template, request, make_response
 from flask_cors import CORS
 from datetime import datetime
-from .extensions import db, migrate, jwt, limiter
+from .extensions import db, migrate, jwt, limiter, oauth
 from .config import config
 from flask_jwt_extended import JWTManager
 import os
@@ -30,6 +31,27 @@ def create_app(config_name='default'):
     migrate.init_app(app, db)
     jwt.init_app(app)
     limiter.init_app(app)
+    oauth.init_app(app)
+
+    oauth.register(
+        name='google',
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={
+            'scope': 'openid email profile'
+        }
+    )
+
+    oauth.register(
+        name='github',
+        client_id=app.config.get("GITHUB_CLIENT_ID"),
+        client_secret=app.config.get("GITHUB_CLIENT_SECRET"),
+        access_token_url='https://github.com/login/oauth/access_token',
+        access_token_params=None,
+        authorize_url='https://github.com/login/oauth/authorize',
+        authorize_params=None,
+        api_base_url='https://api.github.com/',
+        client_kwargs={'scope': 'user:email'},
+    )
 
     # Configure CORS for the API
     CORS(app, resources={r"/api/*": {"origins": "*"}})

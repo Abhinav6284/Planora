@@ -1,3 +1,4 @@
+# abhinav6284/planora/Planora-4ab166033a1dad0a7ca4cb76b7b906a7dd5dfb66/requirements.txt
 flask-sqlalchemy
 flask~=3.1.2
 MyApplication~=0.1.0
@@ -15,3 +16,4 @@ redis~=5.3.1
 Booktype~=1.5
 pandas~=2.3.1
 Flask-Login~=0.6.3
+Authlib>=1.0.0

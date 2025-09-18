@@ -1,3 +1,4 @@
+# abhinav6284/planora/Planora-4ab166033a1dad0a7ca4cb76b7b906a7dd5dfb66/app/models/user.py
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from ..extensions import db
@@ -24,11 +25,16 @@ class User(db.Model):
                           default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(64), unique=True,
                          nullable=False, index=True)
-    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True, index=True)
+    # Made nullable for OAuth users
+    password_hash = db.Column(db.String(255), nullable=True)
     subscription_tier = db.Column(
         db.String(50), nullable=False, server_default='trial')
     trial_ends_at = db.Column(db.DateTime)
+
+    # --- OAuth Fields ---
+    google_id = db.Column(db.String(128), unique=True, nullable=True)
+    github_id = db.Column(db.String(128), unique=True, nullable=True)
 
     # --- Profile Information ---
     first_name = db.Column(db.String(64))

@@ -1,3 +1,4 @@
+# abhinav6284/planora/Planora-4ab166033a1dad0a7ca4cb76b7b906a7dd5dfb66/app/config.py
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -33,6 +34,12 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-string'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+
+    # OAuth Credentials
+    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+    GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
+    GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
 
 
 MAIL_USER = os.getenv("MAIL_USER")
