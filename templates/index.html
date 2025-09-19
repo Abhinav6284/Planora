@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planora - Professional Project Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading Planora...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen hidden">
+        <div class="login-container">
+            <div class="login-header">
+                <h1><i class="fas fa-project-diagram"></i> Planora</h1>
+                <p>Professional Project Management Platform</p>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full-width">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>Don't have an account? <a href="#" id="register-link">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button id="sidebar-toggle" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-project-diagram"></i> Planora
+                </h1>
+            </div>
+
+            <div class="header-right">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="global-search" placeholder="Search tasks, projects, notes..."
+                        class="search-input">
+                </div>
+
+                <div class="user-menu">
+                    <button id="user-menu-btn" class="user-menu-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="user-name">User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <hr class="dropdown-divider">
+                        <a href="#" id="logout-btn" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#overview" class="nav-item active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#tasks" class="nav-item" data-section="tasks">
+                    <i class="fas fa-tasks"></i>
+                    <span>Tasks</span>
+                    <span class="badge" id="tasks-count">0</span>
+                </a>
+                <a href="#projects" class="nav-item" data-section="projects">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="#notes" class="nav-item" data-section="notes">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="#calendar" class="nav-item" data-section="calendar">
+                    <i class="fas fa-calendar"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="#analytics" class="nav-item" data-section="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section id="overview-section" class="content-section active">
+                <div class="section-header">
+                    <h2>Dashboard Overview</h2>
+                    <div class="header-actions">
+                        <button class="btn btn--outline btn--sm" id="refresh-data">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-tasks">0</h3>
+                            <p>Total Tasks</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="completed-tasks">0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="active-projects">0</h3>
+                            <p>Active Projects</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overdue-tasks">0</h3>
+                            <p>Overdue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Recent Tasks</h3>
+                            <a href="#tasks" class="view-all">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div id="recent-tasks" class="task-list">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Active Projects</h3>
+                            <a href="#projects" class="view-all">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div id="active-projects-list">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section id="tasks-section" class="content-section">
+                <div class="section-header">
+                    <h2>Task Management</h2>
+                    <div class="header-actions">
+                        <button class="btn btn--primary" id="create-task-btn">
+                            <i class="fas fa-plus"></i> New Task
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Task Filters -->
+                <div class="filters-bar">
+                    <select id="task-status-filter" class="form-control filter-select">
+                        <option value="">All Status</option>
+                        <option value="todo">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+
+                    <select id="task-priority-filter" class="form-control filter-select">
+                        <option value="">All Priorities</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+
+                    <input type="text" id="task-search" placeholder="Search tasks..."
+                        class="form-control search-filter">
+                </div>
+
+                <!-- Tasks Container -->
+                <div id="tasks-container" class="tasks-container">
+                    <!-- Dynamic content -->
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects-section" class="content-section">
+                <div class="section-header">
+                    <h2>Project Management</h2>
+                    <div class="header-actions">
+                        <button class="btn btn--outline" id="ai-generate-project">
+                            <i class="fas fa-robot"></i> AI Generate
+                        </button>
+                        <button class="btn btn--primary" id="create-project-btn">
+                            <i class="fas fa-plus"></i> New Project
+                        </button>
+                    </div>
+                </div>
+
+                <div id="projects-container" class="projects-grid">
+                    <!-- Dynamic content -->
+                </div>
+            </section>
+
+            <!-- Notes Section -->
+            <section id="notes-section" class="content-section">
+                <div class="section-header">
+                    <h2>Notes</h2>
+                    <div class="header-actions">
+                        <button class="btn btn--primary" id="create-note-btn">
+                            <i class="fas fa-plus"></i> New Note
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notes-layout">
+                    <div class="notes-sidebar">
+                        <div class="notes-search">
+                            <input type="text" id="notes-search" placeholder="Search notes..." class="form-control">
+                        </div>
+                        <div id="notes-list" class="notes-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+
+                    <div class="note-editor">
+                        <div id="note-editor-placeholder" class="editor-placeholder">
+                            <i class="fas fa-sticky-note"></i>
+                            <h3>Select a note to edit</h3>
+                            <p>Choose a note from the list or create a new one</p>
+                        </div>
+
+                        <div id="note-editor-content" class="editor-content hidden">
+                            <input type="text" id="note-title" placeholder="Note title..." class="note-title">
+                            <textarea id="note-content" placeholder="Start writing your note..."
+                                class="note-textarea"></textarea>
+                            <div class="editor-actions">
+                                <button class="btn btn--primary" id="save-note">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <button class="btn btn--outline" id="delete-note">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calendar Section -->
+            <section id="calendar-section" class="content-section">
+                <div class="section-header">
+                    <h2>Calendar</h2>
+                </div>
+                <div id="calendar-container" class="calendar-container">
+                    <div class="calendar-placeholder">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Calendar View</h3>
+                        <p>Task timeline and deadlines</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics-section" class="content-section">
+                <div class="section-header">
+                    <h2>Analytics & Reports</h2>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="chart-card">
+                        <h3>Task Completion Trend</h3>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="completion-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Priority Distribution</h3>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="priority-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="task-modal-title">Create Task</h3>
+                <button class="modal-close" id="task-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="task-form" class="modal-body">
+                <div class="form-group">
+                    <label for="task-title" class="form-label">Title</label>
+                    <input type="text" id="task-title" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="task-description" class="form-label">Description</label>
+                    <textarea id="task-description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-priority" class="form-label">Priority</label>
+                        <select id="task-priority" class="form-control">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="task-status" class="form-label">Status</label>
+                        <select id="task-status" class="form-control">
+                            <option value="todo" selected>To Do</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="task-due-date" class="form-label">Due Date</label>
+                    <input type="date" id="task-due-date" class="form-control">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--outline" id="task-modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn--primary">
+                        <i class="fas fa-save"></i> Save Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Project</h3>
+                <button class="modal-close" id="project-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="project-form" class="modal-body">
+                <div class="form-group">
+                    <label for="project-name" class="form-label">Project Name</label>
+                    <input type="text" id="project-name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-description" class="form-label">Description</label>
+                    <textarea id="project-description" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--outline" id="project-modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn--primary">
+                        <i class="fas fa-save"></i> Create Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div id="ai-chat" class="ai-chat hidden">
+        <div class="chat-header">
+            <h4><i class="fas fa-robot"></i> AI Assistant</h4>
+            <button id="chat-toggle" class="chat-toggle">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-message ai-message">
+                <i class="fas fa-robot"></i>
+                <p>Hi! I'm your AI assistant. Ask me anything about your tasks or projects!</p>
+            </div>
+        </div>
+
+        <form class="chat-input-form" id="chat-form">
+            <input type="text" id="chat-input" placeholder="Ask me anything..." class="chat-input">
+            <button type="submit" class="chat-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- AI Chat FAB -->
+    <button id="ai-fab" class="ai-fab">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

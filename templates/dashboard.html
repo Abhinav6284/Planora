@@ -4,1049 +4,1537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Planora</title>
+    <title>Planora - Project Management Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-    <!DOCTYPE html>
-    <html lang="en">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #f0f6fc;
+            overflow-x: hidden;
+        }
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard - Planora</title>
+        /* Layout */
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #161b22;
+            padding: 20px;
+            border-right: 1px solid #30363d;
+            transition: transform 0.3s ease;
+        }
 
-        <style>
-            :root {
-                --primary-color: #3498db;
-                --secondary-color: #2c3e50;
-                --background-color: #f4f7f9;
-                --sidebar-bg: #233140;
-                --card-bg: #ffffff;
-                --text-primary: #333;
-                --text-secondary: #666;
-                --border-color: #e_a_ecef;
-                --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-                --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                --border-radius: 8px;
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .logo h1 {
+            color: #00d4ff;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #8b949e;
+            font-size: 12px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 8px 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #f0f6fc;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #21262d;
+            color: #00d4ff;
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: #21262d;
+            padding: 15px 25px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #f0f6fc;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .sidebar-toggle:hover {
+            background: #30363d;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: #0d1117;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #00d4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #0d1117;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #00d4ff;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: #00d4ff;
+            color: #0d1117;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #00bfff;
+            transform: translateY(-1px);
+        }
+
+        .btn.secondary {
+            background: #30363d;
+            color: #f0f6fc;
+        }
+
+        .btn.secondary:hover {
+            background: #484f58;
+        }
+
+        .btn.danger {
+            background: #da3633;
+            color: white;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #f0f6fc;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #21262d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .table th {
+            background: #161b22;
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background: #161b22;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.todo {
+            background: rgba(139, 148, 158, 0.2);
+            color: #8b949e;
+        }
+
+        .status-badge.in-progress {
+            background: rgba(251, 133, 0, 0.2);
+            color: #fb8500;
+        }
+
+        .status-badge.completed {
+            background: rgba(46, 160, 67, 0.2);
+            color: #2ea043;
+        }
+
+        /* Priority badges */
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .priority-badge.high {
+            background: #da3633;
+            color: white;
+        }
+
+        .priority-badge.medium {
+            background: #fb8500;
+            color: white;
+        }
+
+        .priority-badge.low {
+            background: #2ea043;
+            color: white;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #21262d;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #da3633;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #30363d;
+            border-radius: 50%;
+            border-top-color: #00d4ff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
+        }
 
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2ea043;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
 
-            body {
-                font-family: var(--font-family);
-                background-color: var(--background-color);
-                color: var(--text-primary);
-                overflow: hidden;
-            }
+        .toast.show {
+            transform: translateX(0);
+        }
 
-            .dashboard {
-                display: grid;
-                grid-template-columns: 240px 1fr;
-                height: 100vh;
-            }
+        .toast.error {
+            background: #da3633;
+        }
 
+        .toast.warning {
+            background: #fb8500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .sidebar {
-                background-color: var(--sidebar-bg);
-                color: white;
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 999;
+                transform: translateX(-100%);
             }
 
-            .sidebar h2 {
-                font-size: 24px;
-                text-align: center;
-                margin-bottom: 40px;
-            }
-
-            .sidebar .nav-item {
-                padding: 12px 15px;
-                margin: 5px 0;
-                cursor: pointer;
-                border-radius: 6px;
-                transition: background-color 0.2s;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                text-decoration: none;
-                color: #bdc3c7;
-            }
-
-            .sidebar .nav-item:hover {
-                background-color: #34495e;
-                color: white;
-            }
-
-            .sidebar .nav-item.active {
-                background-color: var(--primary-color);
-                color: white;
-            }
-
-            .sidebar .logout {
-                margin-top: auto;
-            }
-
-            .main-content {
-                padding: 30px;
-                overflow-y: auto;
-            }
-
-            .page-section {
-                display: none;
-            }
-
-            .page-section.active {
-                display: block;
-                animation: fadeIn 0.5s;
-            }
-
-            .header {
-                margin-bottom: 30px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-                font-weight: 600;
-            }
-
-            .header p {
-                color: var(--text-secondary);
-            }
-
-            .dashboard-grid {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 30px;
+            .sidebar.open {
+                transform: translateX(0);
             }
 
             .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 20px;
-                margin-bottom: 30px;
+                grid-template-columns: 1fr;
             }
+        }
 
-            .stat-card,
-            .content-area {
-                background-color: var(--card-bg);
-                padding: 25px;
-                border-radius: var(--border-radius);
-                box-shadow: var(--shadow);
-                margin-bottom: 30px;
-            }
+        /* Loading state */
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
 
-            .stat-card h3 {
-                color: var(--text-secondary);
-                font-size: 14px;
-                margin-bottom: 10px;
-                font-weight: 500;
-            }
+        .btn.loading i {
+            display: none;
+        }
 
-            .stat-card .value {
-                font-size: 28px;
-                font-weight: 600;
-                color: var(--secondary-color);
-            }
-
-            .content-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-
-            .content-header h2 {
-                font-size: 20px;
-                font-weight: 600;
-            }
-
-            .btn {
-                background-color: var(--primary-color);
-                color: white;
-                border: none;
-                padding: 10px 15px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: 500;
-                transition: all 0.2s;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .btn:hover {
-                background-color: #2980b9;
-                transform: translateY(-2px);
-            }
-
-            /* Scrollable Task List */
-            .task-list-container {
-                max-height: 300px;
-                overflow-y: auto;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            th,
-            td {
-                text-align: left;
-                padding: 12px;
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            th {
-                font-weight: 600;
-                font-size: 12px;
-                text-transform: uppercase;
-                color: var(--text-secondary);
-            }
-
-            /* --- Full Page Chat Modal --- */
-            .chat-modal {
-                display: none;
-                position: fixed;
-                z-index: 1050;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(5px);
-                animation: fadeIn 0.3s;
-            }
-
-            .chat-modal-content {
-                display: flex;
-                flex-direction: column;
-                height: 90%;
-                width: 80%;
-                max-width: 800px;
-                margin: 5vh auto;
-                background: white;
-                border-radius: var(--border-radius);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            }
-
-            .chat-header {
-                padding: 15px 20px;
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .chat-header h2 {
-                font-size: 18px;
-            }
-
-            .chat-header .close-btn {
-                font-size: 28px;
-                cursor: pointer;
-                color: #888;
-            }
-
-            #chat-box {
-                flex-grow: 1;
-                padding: 20px;
-                overflow-y: auto;
-                background: #f9f9f9;
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .chat-message {
-                max-width: 75%;
-                padding: 10px 15px;
-                border-radius: 18px;
-                line-height: 1.5;
-            }
-
-            .chat-message.user {
-                background-color: var(--primary-color);
-                color: white;
-                align-self: flex-end;
-                border-bottom-right-radius: 4px;
-            }
-
-            .chat-message.ai {
-                background-color: #e9ecef;
-                color: black;
-                align-self: flex-start;
-                border-bottom-left-radius: 4px;
-            }
-
-            .chat-footer {
-                padding: 20px;
-                border-top: 1px solid var(--border-color);
-            }
-
-            #chat-form {
-                display: flex;
-                gap: 10px;
-            }
-
-            #chat-input {
-                flex-grow: 1;
-                padding: 12px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-            }
-
-            .typing-indicator {
-                align-self: flex-start;
-                color: var(--text-secondary);
-                font-style: italic;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-
-                to {
-                    opacity: 1;
-                }
-            }
-        </style>
-    </head>
+        .btn.loading::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+    </style>
+</head>
 
 <body>
-    <div class="dashboard">
-        <div class="sidebar">
-            <h2><i class="fas fa-rocket"></i> Planora</h2>
-            <a onclick="showSection('overview')" class="nav-item active"><i class="fas fa-home"></i> Overview</a>
-            <a onclick="showSection('roadmap')" class="nav-item"><i class="fas fa-road"></i> Roadmap & AI</a>
-            <a href="#" class="nav-item logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-
-        <div class="main-content">
-            <div id="overview-section" class="page-section active">
-                <div class="header">
-                    <h1>Dashboard</h1>
-                    <p>Welcome back! Here's your project overview.</p>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Total Projects</h3>
-                        <div class="value" id="total-projects">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Active Tasks</h3>
-                        <div class="value" id="active-tasks">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Completed Tasks</h3>
-                        <div class="value" id="completed-tasks">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Pending Tasks</h3>
-                        <div class="value" id="pending-tasks">0</div>
-                    </div>
-                </div>
-                <div class="dashboard-grid">
-                    <div class="main-column">
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Today's Schedule</h2>
-                                <button class="btn" id="add-task-btn"><i class="fas fa-plus"></i> Add Task</button>
-                            </div>
-                            <table id="today-tasks-table">
-                                <thead>
-                                    <tr>
-                                        <th>Task Title</th>
-                                        <th>Project</th>
-                                        <th>Est. Duration</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="today-tasks-body"></tbody>
-                            </table>
-                        </div>
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Calendar</h2>
-                            </div>
-                            <div id="calendar"></div>
-                        </div>
-                    </div>
-                    <div class="side-column">
-                        <div class="content-area">
-                            <div class="content-header">
-                                <h2>Projects</h2><button class="btn" id="add-project-btn"><i class="fas fa-magic"></i>
-                                    Generate with AI</button>
-                            </div>
-                            <table id="projects-table">
-                                <thead>
-                                    <tr>
-                                        <th>Project Name</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div class="content-area">
-                            <h2>Notes</h2>
-                            <select id="notes-project-select"
-                                style="width:100%; padding: 8px; margin-bottom: 10px;"></select>
-                            <textarea id="notes-area" rows="8" style="width:100%; padding: 8px;"></textarea>
-                            <button class="btn" id="save-notes-btn" style="margin-top: 10px;">Save Notes</button>
-                        </div>
-                    </div>
-                </div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-project-diagram"></i> Planora</h1>
+                <p>Project Management</p>
             </div>
 
-            <div id="roadmap-section" class="page-section">
-                <div class="header">
-                    <div class="content-header">
-                        <h1>Project Roadmaps & AI Assistant</h1>
-                        <button id="export-pdf-btn" class="btn"><i class="fas fa-file-pdf"></i> Export as PDF</button>
-                    </div>
-                    <p>Visualize project progress and chat with your AI assistant to manage tasks.</p>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-section="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="tasks">
+                        <i class="fas fa-tasks"></i>
+                        <span>Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="projects">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="notes">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="ai-chat">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Assistant</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="page-title">Overview</h1>
                 </div>
-                <div class="dashboard-grid">
-                    <div id="roadmap-container"></div>
-                    <div class="content-area">
-                        <h2 class="content-header">Chat with Planora AI</h2>
-                        <select id="chat-project-select"
-                            style="width: calc(100% - 40px); margin: 20px; padding: 10px;"></select>
-                        <div id="chat-box">
-                            <div class="chat-message ai">Please select a project to begin.</div>
+
+                <div class="header-actions">
+                    <button class="btn secondary" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                    <div class="user-info">
+                        <div class="user-avatar">U</div>
+                        <span id="username">User</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="stats-grid" id="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-tasks">0</div>
+                            <div class="stat-label">Total Tasks</div>
                         </div>
-                        <form id="chat-form">
-                            <input type="text" id="chat-input" placeholder="Add a task for..." disabled>
-                            <button type="submit" id="chat-send-btn" class="btn" disabled>Send</button>
-                        </form>
+                        <div class="stat-card">
+                            <div class="stat-number" id="completed-tasks">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-projects">0</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="completion-rate">0%</div>
+                            <div class="stat-label">Completion Rate</div>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-line"></i>
+                                Task Overview
+                            </h3>
+                        </div>
+                        <canvas id="tasksChart" width="400" height="200"></canvas>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-clock"></i>
+                                Recent Tasks
+                            </h3>
+                        </div>
+                        <div id="recent-tasks">
+                            <p>Loading tasks...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tasks Section -->
+                <section id="tasks" class="content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-tasks"></i>
+                                Tasks
+                            </h3>
+                            <button class="btn" id="add-task-btn">
+                                <i class="fas fa-plus"></i>
+                                Add Task
+                            </button>
+                        </div>
+                        <div id="tasks-container">
+                            <p>Loading tasks...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Projects Section -->
+                <section id="projects" class="content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-folder-open"></i>
+                                Projects
+                            </h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" id="add-project-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Add Project
+                                </button>
+                                <button class="btn secondary" id="ai-project-btn">
+                                    <i class="fas fa-magic"></i>
+                                    AI Generate
+                                </button>
+                            </div>
+                        </div>
+                        <div id="projects-container">
+                            <p>Loading projects...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notes Section -->
+                <section id="notes" class="content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-sticky-note"></i>
+                                Notes
+                            </h3>
+                            <button class="btn" id="add-note-btn">
+                                <i class="fas fa-plus"></i>
+                                Add Note
+                            </button>
+                        </div>
+                        <div id="notes-container">
+                            <p>Loading notes...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Chat Section -->
+                <section id="ai-chat" class="content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-robot"></i>
+                                AI Assistant
+                            </h3>
+                        </div>
+                        <div id="chat-messages"
+                            style="height: 400px; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
+                            <div class="chat-message assistant">
+                                <strong>Planora AI:</strong> Hello! I can help you manage your tasks and projects. What
+                                would you like to do?
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="chat-input" class="form-control" placeholder="Ask me anything..."
+                                style="flex: 1;">
+                            <button class="btn" id="send-chat-btn">
+                                <i class="fas fa-paper-plane"></i>
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </div>
-        </div>
+        </main>
     </div>
 
-    <div id="project-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-project-modal">&times;</span>
-            <h2>Generate a New Project Plan</h2>
-            <form id="project-form">
-                <label for="project-goal">Describe your goal, and our AI will create a roadmap for you:</label>
-                <textarea id="project-goal" rows="4"
-                    placeholder="e.g., Learn Flask and build a personal blog website in 2 weeks"></textarea>
-                <button type="submit" class="btn" id="generate-btn">
-                    <span id="generate-btn-text">Generate Plan</span>
-                    <span id="generate-spinner" style="display:none;">Generating...</span>
-                </button>
-            </form>
-        </div>
-    </div>
+    <!-- Task Modal -->
     <div id="task-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="close-task-modal">&times;</span>
-            <h2>Create New Task</h2>
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Task</h3>
+                <button class="close-btn" data-modal="task-modal">&times;</button>
+            </div>
             <form id="task-form">
-                <label for="task-title">Task Title:</label><input type="text" id="task-title" required>
-                <label for="task-project">Assign to Project:</label><select id="task-project" required></select>
-                <label for="task-due-date">Due Date:</label><input type="date" id="task-due-date">
-                <button type="submit" class="btn">Create Task</button>
+                <div class="form-group">
+                    <label class="form-label">Title *</label>
+                    <input type="text" id="task-title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="task-description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Project</label>
+                    <select id="task-project" class="form-control">
+                        <option value="">Select Project</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <select id="task-priority" class="form-control">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="datetime-local" id="task-due-date" class="form-control">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn secondary" data-modal="task-modal">Cancel</button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i>
+                        Save Task
+                    </button>
+                </div>
             </form>
         </div>
     </div>
-    <div id="toast-notification" class="toast"></div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Project</h3>
+                <button class="close-btn" data-modal="project-modal">&times;</button>
+            </div>
+            <form id="project-form">
+                <div class="form-group">
+                    <label class="form-label">Name *</label>
+                    <input type="text" id="project-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="project-description" class="form-control" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn secondary" data-modal="project-modal">Cancel</button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i>
+                        Save Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Project Modal -->
+    <div id="ai-project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">AI Project Generator</h3>
+                <button class="close-btn" data-modal="ai-project-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Describe your project goal:</label>
+                <textarea id="project-goal" class="form-control" rows="4"
+                    placeholder="e.g., Build a mobile app for fitness tracking"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn secondary" data-modal="ai-project-modal">Cancel</button>
+                <button type="button" class="btn" id="generate-project-btn">
+                    <i class="fas fa-magic"></i>
+                    Generate Project
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="note-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Note</h3>
+                <button class="close-btn" data-modal="note-modal">&times;</button>
+            </div>
+            <form id="note-form">
+                <div class="form-group">
+                    <label class="form-label">Title *</label>
+                    <input type="text" id="note-title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Content *</label>
+                    <textarea id="note-content" class="form-control" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Project</label>
+                    <select id="note-project" class="form-control">
+                        <option value="">Select Project</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn secondary" data-modal="note-modal">Cancel</button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i>
+                        Save Note
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // --- Full, Consolidated JavaScript ---
-        let token = localStorage.getItem('planora_token');
-        let allProjects = [];
-        let allTasks = [];
-        let calendar;
+        // Planora Dashboard Application
+        class PlanoraDashboard {
+            constructor() {
+                this.baseURL = ''; // Add your API base URL here if needed
+                this.token = localStorage.getItem('planora_token') || null;
+                this.data = {
+                    tasks: [],
+                    projects: [],
+                    notes: [],
+                    stats: {}
+                };
+                this.init();
+            }
 
-        // --- Core Functions ---
-        function showSection(sectionId) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById(sectionId + '-section').classList.add('active');
-            document.querySelector(`.nav-item[onclick="showSection('${sectionId}')"]`).classList.add('active');
-            if (sectionId === 'roadmap') loadRoadmapData();
+            init() {
+                this.setupEventListeners();
+                this.loadDashboardData();
+            }
+
+            setupEventListeners() {
+                // Sidebar navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = link.dataset.section;
+                        this.showSection(section);
+                    });
+                });
+
+                // Sidebar toggle
+                document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                    this.toggleSidebar();
+                });
+
+                // Refresh button
+                document.getElementById('refresh-btn').addEventListener('click', () => {
+                    this.refreshData();
+                });
+
+                // Add buttons
+                document.getElementById('add-task-btn').addEventListener('click', () => {
+                    this.showModal('task-modal');
+                });
+
+                document.getElementById('add-project-btn').addEventListener('click', () => {
+                    this.showModal('project-modal');
+                });
+
+                document.getElementById('ai-project-btn').addEventListener('click', () => {
+                    this.showModal('ai-project-modal');
+                });
+
+                document.getElementById('add-note-btn').addEventListener('click', () => {
+                    this.showModal('note-modal');
+                });
+
+                // Form submissions
+                document.getElementById('task-form').addEventListener('submit', (e) => {
+                    this.handleTaskSubmit(e);
+                });
+
+                document.getElementById('project-form').addEventListener('submit', (e) => {
+                    this.handleProjectSubmit(e);
+                });
+
+                document.getElementById('note-form').addEventListener('submit', (e) => {
+                    this.handleNoteSubmit(e);
+                });
+
+                // AI project generation
+                document.getElementById('generate-project-btn').addEventListener('click', () => {
+                    this.generateAIProject();
+                });
+
+                // Chat functionality
+                document.getElementById('send-chat-btn').addEventListener('click', () => {
+                    this.sendChatMessage();
+                });
+
+                document.getElementById('chat-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendChatMessage();
+                    }
+                });
+
+                // Modal close buttons
+                document.querySelectorAll('[data-modal]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const modalId = btn.dataset.modal;
+                        this.hideModal(modalId);
+                    });
+                });
+
+                // Close modals on background click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.hideModal(modal.id);
+                        }
+                    });
+                });
+            }
+
+            showSection(sectionId) {
+                // Update navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+
+                // Update content
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+
+                // Update page title
+                const titles = {
+                    overview: 'Overview',
+                    tasks: 'Tasks',
+                    projects: 'Projects',
+                    notes: 'Notes',
+                    'ai-chat': 'AI Assistant'
+                };
+                document.getElementById('page-title').textContent = titles[sectionId] || 'Dashboard';
+
+                // Load section-specific data
+                this.loadSectionData(sectionId);
+            }
+
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('open');
+            }
+
+            showModal(modalId) {
+                document.getElementById(modalId).classList.add('show');
+                this.populateProjectDropdowns();
+            }
+
+            hideModal(modalId) {
+                document.getElementById(modalId).classList.remove('show');
+                // Reset forms
+                const modal = document.getElementById(modalId);
+                const form = modal.querySelector('form');
+                if (form) {
+                    form.reset();
+                }
+            }
+
+            async loadDashboardData() {
+                try {
+                    // Simulate API call - replace with actual API calls
+                    await this.loadMockData();
+                    this.renderDashboard();
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    this.showToast('Error loading data', 'error');
+                }
+            }
+
+            async loadMockData() {
+                // Mock data for demonstration - replace with actual API calls
+                this.data = {
+                    stats: {
+                        totalTasks: 12,
+                        completedTasks: 8,
+                        totalProjects: 3,
+                        completionRate: 67
+                    },
+                    tasks: [
+                        {
+                            id: 1,
+                            title: 'Complete dashboard design',
+                            description: 'Finish the main dashboard interface',
+                            status: 'in-progress',
+                            priority: 'high',
+                            project: 'Planora',
+                            dueDate: '2025-09-25',
+                            createdAt: '2025-09-19'
+                        },
+                        {
+                            id: 2,
+                            title: 'Set up backend API',
+                            description: 'Configure Flask routes and database',
+                            status: 'completed',
+                            priority: 'high',
+                            project: 'Planora',
+                            dueDate: '2025-09-20',
+                            createdAt: '2025-09-18'
+                        },
+                        {
+                            id: 3,
+                            title: 'Write documentation',
+                            description: 'Create user guide and API docs',
+                            status: 'todo',
+                            priority: 'medium',
+                            project: 'Planora',
+                            dueDate: '2025-09-30',
+                            createdAt: '2025-09-19'
+                        }
+                    ],
+                    projects: [
+                        {
+                            id: 1,
+                            name: 'Planora',
+                            description: 'Project management application',
+                            status: 'active',
+                            createdAt: '2025-09-15'
+                        },
+                        {
+                            id: 2,
+                            name: 'Mobile App',
+                            description: 'iOS/Android companion app',
+                            status: 'active',
+                            createdAt: '2025-09-18'
+                        }
+                    ],
+                    notes: [
+                        {
+                            id: 1,
+                            title: 'Meeting Notes',
+                            content: 'Discussed project timeline and requirements...',
+                            project: 'Planora',
+                            createdAt: '2025-09-19'
+                        }
+                    ]
+                };
+            }
+
+            renderDashboard() {
+                this.renderStats();
+                this.renderChart();
+                this.renderRecentTasks();
+            }
+
+            renderStats() {
+                const stats = this.data.stats;
+                document.getElementById('total-tasks').textContent = stats.totalTasks;
+                document.getElementById('completed-tasks').textContent = stats.completedTasks;
+                document.getElementById('total-projects').textContent = stats.totalProjects;
+                document.getElementById('completion-rate').textContent = stats.completionRate + '%';
+            }
+
+            renderChart() {
+                const ctx = document.getElementById('tasksChart');
+                const completedTasks = this.data.stats.completedTasks;
+                const inProgressTasks = this.data.tasks.filter(t => t.status === 'in-progress').length;
+                const todoTasks = this.data.tasks.filter(t => t.status === 'todo').length;
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'In Progress', 'Todo'],
+                        datasets: [{
+                            data: [completedTasks, inProgressTasks, todoTasks],
+                            backgroundColor: ['#2ea043', '#fb8500', '#8b949e']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#f0f6fc' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderRecentTasks() {
+                const container = document.getElementById('recent-tasks');
+                const recentTasks = this.data.tasks.slice(0, 5);
+
+                if (recentTasks.length === 0) {
+                    container.innerHTML = '<p>No tasks found.</p>';
+                    return;
+                }
+
+                container.innerHTML = recentTasks.map(task => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #30363d;">
+                        <div>
+                            <strong>${task.title}</strong>
+                            <div style="font-size: 12px; color: #8b949e;">
+                                ${task.project ? task.project + ' • ' : ''}${new Date(task.createdAt).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="priority-badge ${task.priority}">${task.priority}</span>
+                            <span class="status-badge ${task.status}">${task.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            loadSectionData(sectionId) {
+                switch (sectionId) {
+                    case 'tasks':
+                        this.renderTasks();
+                        break;
+                    case 'projects':
+                        this.renderProjects();
+                        break;
+                    case 'notes':
+                        this.renderNotes();
+                        break;
+                }
+            }
+
+            renderTasks() {
+                const container = document.getElementById('tasks-container');
+                const tasks = this.data.tasks;
+
+                if (tasks.length === 0) {
+                    container.innerHTML = '<p>No tasks found. Create your first task!</p>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Project</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tasks.map(task => `
+                                <tr>
+                                    <td>
+                                        <strong>${task.title}</strong>
+                                        ${task.description ? '<br><small>' + task.description + '</small>' : ''}
+                                    </td>
+                                    <td>${task.project || '-'}</td>
+                                    <td><span class="priority-badge ${task.priority}">${task.priority}</span></td>
+                                    <td><span class="status-badge ${task.status}">${task.status}</span></td>
+                                    <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</td>
+                                    <td>
+                                        <button class="btn secondary" style="padding: 4px 8px; font-size: 12px;" onclick="app.editTask(${task.id})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn danger" style="padding: 4px 8px; font-size: 12px; margin-left: 4px;" onclick="app.deleteTask(${task.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            renderProjects() {
+                const container = document.getElementById('projects-container');
+                const projects = this.data.projects;
+
+                if (projects.length === 0) {
+                    container.innerHTML = '<p>No projects found. Create your first project!</p>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${projects.map(project => `
+                                <tr>
+                                    <td>
+                                        <strong>${project.name}</strong>
+                                        ${project.description ? '<br><small>' + project.description + '</small>' : ''}
+                                    </td>
+                                    <td><span class="status-badge ${project.status}">${project.status}</span></td>
+                                    <td>${new Date(project.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                        <button class="btn secondary" style="padding: 4px 8px; font-size: 12px;" onclick="app.editProject(${project.id})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn danger" style="padding: 4px 8px; font-size: 12px; margin-left: 4px;" onclick="app.deleteProject(${project.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            renderNotes() {
+                const container = document.getElementById('notes-container');
+                const notes = this.data.notes;
+
+                if (notes.length === 0) {
+                    container.innerHTML = '<p>No notes found. Create your first note!</p>';
+                    return;
+                }
+
+                container.innerHTML = notes.map(note => `
+                    <div class="card" style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <h4>${note.title}</h4>
+                            <div>
+                                <button class="btn secondary" style="padding: 4px 8px; font-size: 12px;" onclick="app.editNote(${note.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn danger" style="padding: 4px 8px; font-size: 12px; margin-left: 4px;" onclick="app.deleteNote(${note.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p>${note.content}</p>
+                        <div style="font-size: 12px; color: #8b949e; margin-top: 10px;">
+                            ${note.project ? note.project + ' • ' : ''}${new Date(note.createdAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            populateProjectDropdowns() {
+                const projectSelects = document.querySelectorAll('#task-project, #note-project');
+                const projects = this.data.projects;
+
+                projectSelects.forEach(select => {
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">Select Project</option>' +
+                        projects.map(project =>
+                            `<option value="${project.id}">${project.name}</option>`
+                        ).join('');
+                    select.value = currentValue;
+                });
+            }
+
+            async handleTaskSubmit(e) {
+                e.preventDefault();
+
+                const formData = {
+                    title: document.getElementById('task-title').value,
+                    description: document.getElementById('task-description').value,
+                    project_id: document.getElementById('task-project').value || null,
+                    priority: document.getElementById('task-priority').value,
+                    due_date: document.getElementById('task-due-date').value || null
+                };
+
+                try {
+                    // Simulate API call
+                    console.log('Creating task:', formData);
+
+                    // Add to local data for demo
+                    const newTask = {
+                        id: Date.now(),
+                        title: formData.title,
+                        description: formData.description,
+                        status: 'todo',
+                        priority: formData.priority,
+                        project: formData.project_id ? this.data.projects.find(p => p.id == formData.project_id)?.name : null,
+                        dueDate: formData.due_date,
+                        createdAt: new Date().toISOString().split('T')[0]
+                    };
+
+                    this.data.tasks.push(newTask);
+                    this.data.stats.totalTasks++;
+
+                    this.showToast('Task created successfully!', 'success');
+                    this.hideModal('task-modal');
+                    this.renderDashboard();
+                    this.renderTasks();
+                } catch (error) {
+                    console.error('Error creating task:', error);
+                    this.showToast('Failed to create task', 'error');
+                }
+            }
+
+            async handleProjectSubmit(e) {
+                e.preventDefault();
+
+                const formData = {
+                    name: document.getElementById('project-name').value,
+                    description: document.getElementById('project-description').value
+                };
+
+                try {
+                    console.log('Creating project:', formData);
+
+                    // Add to local data for demo
+                    const newProject = {
+                        id: Date.now(),
+                        name: formData.name,
+                        description: formData.description,
+                        status: 'active',
+                        createdAt: new Date().toISOString().split('T')[0]
+                    };
+
+                    this.data.projects.push(newProject);
+                    this.data.stats.totalProjects++;
+
+                    this.showToast('Project created successfully!', 'success');
+                    this.hideModal('project-modal');
+                    this.renderDashboard();
+                    this.renderProjects();
+                } catch (error) {
+                    console.error('Error creating project:', error);
+                    this.showToast('Failed to create project', 'error');
+                }
+            }
+
+            async handleNoteSubmit(e) {
+                e.preventDefault();
+
+                const formData = {
+                    title: document.getElementById('note-title').value,
+                    content: document.getElementById('note-content').value,
+                    project_id: document.getElementById('note-project').value || null
+                };
+
+                try {
+                    console.log('Creating note:', formData);
+
+                    // Add to local data for demo
+                    const newNote = {
+                        id: Date.now(),
+                        title: formData.title,
+                        content: formData.content,
+                        project: formData.project_id ? this.data.projects.find(p => p.id == formData.project_id)?.name : null,
+                        createdAt: new Date().toISOString().split('T')[0]
+                    };
+
+                    this.data.notes.push(newNote);
+
+                    this.showToast('Note created successfully!', 'success');
+                    this.hideModal('note-modal');
+                    this.renderNotes();
+                } catch (error) {
+                    console.error('Error creating note:', error);
+                    this.showToast('Failed to create note', 'error');
+                }
+            }
+
+            async generateAIProject() {
+                const goal = document.getElementById('project-goal').value;
+                if (!goal.trim()) {
+                    this.showToast('Please describe your project goal', 'warning');
+                    return;
+                }
+
+                const btn = document.getElementById('generate-project-btn');
+                btn.classList.add('loading');
+
+                try {
+                    // Simulate AI project generation
+                    console.log('Generating AI project for goal:', goal);
+
+                    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay
+
+                    // Create mock AI-generated project
+                    const aiProject = {
+                        id: Date.now(),
+                        name: 'AI Generated: ' + goal.split(' ').slice(0, 3).join(' '),
+                        description: 'AI-generated project based on: ' + goal,
+                        status: 'active',
+                        createdAt: new Date().toISOString().split('T')[0]
+                    };
+
+                    this.data.projects.push(aiProject);
+                    this.data.stats.totalProjects++;
+
+                    this.showToast('AI project generated successfully!', 'success');
+                    this.hideModal('ai-project-modal');
+                    this.renderProjects();
+                } catch (error) {
+                    console.error('Error generating AI project:', error);
+                    this.showToast('Failed to generate project', 'error');
+                } finally {
+                    btn.classList.remove('loading');
+                }
+            }
+
+            sendChatMessage() {
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                if (!message) return;
+
+                const chatMessages = document.getElementById('chat-messages');
+
+                // Add user message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'chat-message user';
+                userMsg.innerHTML = `<strong>You:</strong> ${message}`;
+                userMsg.style.cssText = 'margin-bottom: 15px; padding: 10px; background: #00d4ff; color: #0d1117; border-radius: 6px;';
+                chatMessages.appendChild(userMsg);
+
+                input.value = '';
+
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'chat-message assistant';
+                    aiMsg.innerHTML = `<strong>Planora AI:</strong> I understand you want to "${message}". I can help you manage your tasks and projects. Try asking me to create a task or project!`;
+                    aiMsg.style.cssText = 'margin-bottom: 15px; padding: 10px; background: #21262d; border: 1px solid #30363d; border-radius: 6px;';
+                    chatMessages.appendChild(aiMsg);
+
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Action handlers
+            editTask(taskId) {
+                console.log('Edit task:', taskId);
+                this.showToast('Edit task functionality coming soon!', 'info');
+            }
+
+            deleteTask(taskId) {
+                if (confirm('Are you sure you want to delete this task?')) {
+                    this.data.tasks = this.data.tasks.filter(t => t.id !== taskId);
+                    this.data.stats.totalTasks--;
+                    this.showToast('Task deleted successfully!', 'success');
+                    this.renderTasks();
+                    this.renderDashboard();
+                }
+            }
+
+            editProject(projectId) {
+                console.log('Edit project:', projectId);
+                this.showToast('Edit project functionality coming soon!', 'info');
+            }
+
+            deleteProject(projectId) {
+                if (confirm('Are you sure you want to delete this project?')) {
+                    this.data.projects = this.data.projects.filter(p => p.id !== projectId);
+                    this.data.stats.totalProjects--;
+                    this.showToast('Project deleted successfully!', 'success');
+                    this.renderProjects();
+                    this.renderDashboard();
+                }
+            }
+
+            editNote(noteId) {
+                console.log('Edit note:', noteId);
+                this.showToast('Edit note functionality coming soon!', 'info');
+            }
+
+            deleteNote(noteId) {
+                if (confirm('Are you sure you want to delete this note?')) {
+                    this.data.notes = this.data.notes.filter(n => n.id !== noteId);
+                    this.showToast('Note deleted successfully!', 'success');
+                    this.renderNotes();
+                }
+            }
+
+            refreshData() {
+                const btn = document.getElementById('refresh-btn');
+                btn.classList.add('loading');
+
+                setTimeout(() => {
+                    this.loadDashboardData();
+                    btn.classList.remove('loading');
+                    this.showToast('Data refreshed successfully!', 'success');
+                }, 1000);
+            }
+
+            showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => document.body.removeChild(toast), 300);
+                }, 3000);
+            }
         }
 
+        // Initialize the application
+        let app;
         document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlToken = urlParams.get('token');
-            if (urlToken) {
-                localStorage.setItem('planora_token', urlToken);
-                token = urlToken;
-                window.history.replaceState({}, document.title, "/dashboard");
-            }
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
-            initializeCalendar();
-            loadDashboardData();
-            setupEventListeners();
+            app = new PlanoraDashboard();
         });
-
-        function setupEventListeners() {
-            // Modals
-            document.getElementById('add-project-btn').onclick = () => (document.getElementById('project-modal').style.display = 'block');
-            document.getElementById('add-task-btn').onclick = () => (document.getElementById('task-modal').style.display = 'block');
-            document.getElementById('close-project-modal').onclick = () => (document.getElementById('project-modal').style.display = 'none');
-            document.getElementById('close-task-modal').onclick = () => (document.getElementById('task-modal').style.display = 'none');
-            document.getElementById('open-chat-btn').onclick = () => document.getElementById('chat-modal').style.display = 'block';
-            document.getElementById('close-chat-modal').onclick = () => document.getElementById('chat-modal').style.display = 'none';
-
-            window.onclick = (event) => {
-                if (event.target == document.getElementById('project-modal')) document.getElementById('project-modal').style.display = 'none';
-                if (event.target == document.getElementById('task-modal')) document.getElementById('task-modal').style.display = 'none';
-            };
-
-            // Forms
-            document.getElementById('project-form').addEventListener('submit', createProjectWithAI);
-            document.getElementById('task-form').addEventListener('submit', createTaskManually);
-            document.getElementById('chat-form').addEventListener('submit', sendMessage);
-
-            // Buttons and Inputs
-            document.getElementById('logout-btn').onclick = () => {
-                localStorage.removeItem('planora_token');
-                window.location.href = '/login';
-            };
-            document.getElementById('start-timer-btn').addEventListener('click', () => {
-                if (isTimerRunning) stopTimer();
-                else startTimer();
-            });
-            document.getElementById('save-notes-btn').addEventListener('click', saveNotes);
-            document.getElementById('focus-task-select').addEventListener('change', updateTimerDisplayFromTask);
-            document.getElementById('export-pdf-btn').addEventListener('click', exportRoadmapToPDF);
-        }
-
-        // --- DATA LOADING ---
-        async function loadDashboardData() {
-            try {
-                const response = await fetch('/api/dashboard/data', { headers: { Authorization: `Bearer ${token}` } });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    const { user, stats, projects, tasks, calendar_tasks } = result.data;
-                    allProjects = projects;
-                    allTasks = tasks;
-                    renderUI(user, stats, projects, tasks, calendar_tasks);
-                } else {
-                    if (response.status === 401 || response.status === 422) window.location.href = '/login';
-                    else showToast(result.message || 'Could not load dashboard data.', 'error');
-                }
-            } catch (error) {
-                showToast('Could not connect to the server.', 'error');
-            }
-        }
-
-        async function loadRoadmapData() {
-            const container = document.getElementById('roadmap-container');
-            container.innerHTML = '<p>Loading roadmaps...</p>';
-            try {
-                const response = await fetch('/api/roadmap/data', { headers: { Authorization: `Bearer ${token}` } });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    renderRoadmaps(result.data.projects);
-                    setupChat(result.data.projects);
-                } else {
-                    container.innerHTML = `<p class="text-red-500">Error: ${result.message}</p>`;
-                }
-            } catch (error) {
-                container.innerHTML = `<p class="text-red-500">A network error occurred.</p>`;
-            }
-        }
-
-        // --- UI RENDERING ---
-        function renderUI(user, stats, projects, tasks, calendar_tasks) {
-            document.querySelector('#overview-section .header p').textContent = `Welcome back, ${user.first_name}! Let's get productive.`;
-            document.getElementById('total-projects').textContent = stats.total;
-            document.getElementById('active-tasks').textContent = stats.pending;
-            document.getElementById('completed-tasks').textContent = stats.completed;
-            document.getElementById('pending-tasks').textContent = stats.pending;
-            renderProjectsTable(projects);
-            renderTaskTables(tasks);
-            populateProjectDropdowns(projects, tasks);
-            updateCalendarEvents(calendar_tasks);
-        }
-
-        function renderProjectsTable(projects) {
-            const projectsTableBody = document.querySelector('#projects-table tbody');
-            projectsTableBody.innerHTML = '';
-            projects.forEach(p => {
-                const row = projectsTableBody.insertRow();
-                row.innerHTML = `<td>${p.name}</td><td><button class="btn" onclick="deleteProject(${p.id}, '${p.name}')">Delete</button></td>`;
-            });
-        }
-
-        function renderTaskTables(tasks) {
-            const tbody = document.getElementById('today-tasks-body');
-            tbody.innerHTML = '';
-            const today = new Date().toISOString().split('T')[0];
-            tasks.filter(t => t.due_date && t.due_date.startsWith(today)).forEach(t => {
-                const project = allProjects.find(p => p.id === t.project_id) || { name: 'N/A' };
-                tbody.innerHTML += `<tr><td>${t.title}</td><td>${project.name}</td><td>${t.status}</td><td>...</td></tr>`;
-            });
-        }
-
-        function renderRoadmaps(projects) {
-            const container = document.getElementById('roadmap-container');
-            container.innerHTML = '';
-            if (projects.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">No projects found. Create one with AI to see its roadmap.</p>';
-                return;
-            }
-            projects.forEach(project => {
-                const projectElement = document.createElement('div');
-                projectElement.className = 'bg-white p-6 rounded-lg shadow-md';
-                let tasksHtml = '<ul class="list-disc list-inside mt-4 space-y-2">';
-                if (project.tasks.length > 0) {
-                    project.tasks.forEach(task => {
-                        const statusClass = task.status === 'completed' ? 'text-green-500' : 'text-gray-500';
-                        tasksHtml += `<li class="text-gray-700">${task.title} - <span class="text-sm font-semibold ${statusClass}">${task.status}</span></li>`;
-                    });
-                } else {
-                    tasksHtml += '<li class="text-gray-500">No tasks for this project yet.</li>';
-                }
-                tasksHtml += '</ul>';
-                projectElement.innerHTML = `
-                        <h2 class="text-2xl font-bold text-gray-800">${project.name} (${project.status})</h2>
-                        <p class="text-gray-600 mt-2">${project.description || ''}</p>
-                        ${tasksHtml}`;
-                container.appendChild(projectElement);
-            });
-        }
-
-        function populateProjectDropdowns(projects, tasks) {
-            const taskProjectSelect = document.getElementById('task-project');
-            const focusTaskSelect = document.getElementById('focus-task-select');
-            const notesProjectSelect = document.getElementById('notes-project-select');
-            taskProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
-            focusTaskSelect.innerHTML = '<option value="">-- Select Task for Timer --</option>';
-            notesProjectSelect.innerHTML = '<option value="">-- Select Project for Notes --</option>';
-            projects.forEach(p => {
-                taskProjectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-                notesProjectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-            });
-            tasks.filter(t => t.status !== 'completed').forEach(t => {
-                focusTaskSelect.innerHTML += `<option value="${t.id}">${t.title}</option>`;
-            });
-        }
-
-        // --- CALENDAR ---
-        function initializeCalendar() {
-            const calendarEl = document.getElementById('calendar');
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-                events: []
-            });
-            calendar.render();
-        }
-
-        function updateCalendarEvents(tasks) {
-            const calendarEvents = tasks.map(task => ({
-                title: task.title,
-                start: task.start,
-                allDay: true,
-            }));
-            calendar.getEventSources().forEach(source => source.remove());
-            calendar.addEventSource(calendarEvents);
-        }
-
-        // --- FOCUS TIMER ---
-        const timerDisplay = document.getElementById('timer-display');
-        const startTimerBtn = document.getElementById('start-timer-btn');
-        const focusTaskSelect = document.getElementById('focus-task-select');
-        let timer;
-        let timeRemaining = 25 * 60;
-        let isTimerRunning = false;
-        let currentSessionId = null;
-
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
-
-        function updateTimerDisplayFromTask() {
-            if (isTimerRunning) {
-                showToast('Please stop the current session before selecting a new task.', 'error');
-                focusTaskSelect.value = focusTaskSelect.dataset.runningTaskId || "";
-                return;
-            }
-            const taskId = parseInt(focusTaskSelect.value);
-            if (!taskId) {
-                timeRemaining = 25 * 60;
-                timerDisplay.textContent = formatTime(timeRemaining);
-                return;
-            }
-            const selectedTask = allTasks.find(task => task.id === taskId);
-            if (selectedTask && selectedTask.estimated_duration) {
-                timeRemaining = selectedTask.estimated_duration * 60;
-            } else {
-                timeRemaining = 25 * 60;
-                showToast('Selected task has no duration. Defaulting to 25 minutes.', 'info');
-            }
-            timerDisplay.textContent = formatTime(timeRemaining);
-        }
-
-        async function startTimer() {
-            if (isTimerRunning) return;
-            const taskId = focusTaskSelect.value;
-            if (!taskId) {
-                showToast('Please select a task to focus on.', 'error');
-                return;
-            }
-            focusTaskSelect.dataset.runningTaskId = taskId;
-            try {
-                const response = await fetch('/api/focus_sessions/start', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({ task_id: taskId }),
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    currentSessionId = result.session_id;
-                    isTimerRunning = true;
-                    startTimerBtn.textContent = 'Stop Focus';
-                    timer = setInterval(updateTimer, 1000);
-                    showToast('Focus session started!', 'success');
-                } else {
-                    showToast(result.message, 'error');
-                }
-            } catch (error) {
-                showToast('Could not start the session.', 'error');
-            }
-        }
-
-        async function stopTimer() {
-            if (!isTimerRunning) return;
-            clearInterval(timer);
-            isTimerRunning = false;
-            startTimerBtn.textContent = 'Start Focus';
-            focusTaskSelect.dataset.runningTaskId = '';
-            try {
-                const response = await fetch(`/api/focus_sessions/${currentSessionId}/stop`, {
-                    method: 'POST',
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                const result = await response.json();
-                if (response.ok) showToast('Focus session stopped!', 'success');
-                else showToast(result.message, 'error');
-            } catch (error) {
-                showToast('Could not stop the session.', 'error');
-            } finally {
-                timeRemaining = 25 * 60;
-                timerDisplay.textContent = formatTime(timeRemaining);
-                currentSessionId = null;
-            }
-        }
-
-        function updateTimer() {
-            timeRemaining--;
-            timerDisplay.textContent = formatTime(timeRemaining);
-            if (timeRemaining <= 0) {
-                stopTimer();
-                alert("Time's up! Take a short break.");
-            }
-        }
-
-        // --- AI CHAT FUNCTIONS ---
-        function setupChat(projects) {
-            const chatInput = document.getElementById('chat-input');
-            const chatSendBtn = document.getElementById('chat-send-btn');
-            const chatBox = document.getElementById('chat-box');
-
-            // No dropdown to set up, so we just enable the chat controls
-            chatInput.disabled = false;
-            chatSendBtn.disabled = false;
-            chatBox.innerHTML = '<div class="chat-message ai">Hello! How can I help you plan your projects today?</div>';
-        }
-
-        async function sendMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-
-            // We no longer get projectId from a dropdown
-            if (!message) return;
-
-            appendMessage(message, 'user');
-            input.value = '';
-            appendMessage("...", 'typing');
-
-            try {
-                const response = await fetch('/api/roadmap/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    // We are not sending a project_id anymore
-                    body: JSON.stringify({ message: message }),
-                });
-                const result = await response.json();
-                document.getElementById('typing-indicator').remove();
-
-                if (response.ok && result.success) {
-                    appendMessage(result.reply, 'ai');
-                    if (result.action_taken === 'reload') {
-                        showToast('Your projects have been updated!', 'success');
-                        loadRoadmapData(); // Reload roadmap data to reflect changes
-                    }
-                } else {
-                    appendMessage(result.message || 'An error occurred.', 'ai');
-                }
-            } catch (error) {
-                document.getElementById('typing-indicator').remove();
-                appendMessage('Network error. Please try again.', 'ai');
-            }
-        }
-
-        function appendMessage(message, sender) {
-            const chatBox = document.getElementById('chat-box');
-            const messageDiv = document.createElement('div');
-            let senderClass = '';
-            if (sender === 'user') senderClass = 'text-right text-blue-800';
-            else if (sender === 'ai') senderClass = 'text-left text-gray-800';
-            else senderClass = 'text-left text-red-600';
-            messageDiv.className = `my-2 ${senderClass}`;
-            messageDiv.textContent = message;
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // --- PDF EXPORT ---
-        function exportRoadmapToPDF() {
-            if (!window.jspdf || !allProjects || allProjects.length === 0) {
-                return showToast('No project data to export.', 'error');
-            }
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(20);
-            doc.text("Planora Project Roadmaps", 14, 22);
-            doc.setFontSize(10);
-            doc.text(`Report Generated: ${new Date().toLocaleDateString()}`, 14, 30);
-            let y = 40;
-
-            allProjects.forEach(project => {
-                if (y > 250) { doc.addPage(); y = 20; }
-                doc.setFontSize(16);
-                doc.text(project.name, 14, y);
-                y += 8;
-                const desc = doc.splitTextToSize(project.description || 'No description.', 180);
-                doc.text(desc, 14, y);
-                y += (desc.length * 5) + 5;
-
-                const head = [['Task Title', 'Status', 'Due Date']];
-                const body = project.tasks.map(t => [t.title, t.status, t.due_date ? new Date(t.due_date).toLocaleDateString() : 'N/A']);
-
-                doc.autoTable({
-                    head: head,
-                    body: body,
-                    startY: y,
-                    theme: 'grid',
-                    headStyles: { fillColor: [44, 62, 80] }
-                });
-                y = doc.lastAutoTable.finalY + 15;
-            });
-            doc.save('Planora_Roadmaps.pdf');
-            showToast('PDF generated successfully!', 'success');
-        }
-
-        // --- OTHER UTILITY & CRUD FUNCTIONS ---
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast-notification');
-            toast.textContent = message;
-            toast.className = `toast show ${type}`;
-            setTimeout(() => { toast.className = toast.className.replace('show', '') }, 3000);
-        }
-
-        async function createProjectWithAI(e) {
-            e.preventDefault();
-            const goal = document.getElementById('project-goal').value;
-            const generateBtn = document.getElementById('generate-btn');
-            const btnText = document.getElementById('generate-btn-text');
-            const spinner = document.getElementById('generate-spinner');
-
-            if (!goal) {
-                showToast('Please describe your goal.', 'error');
-                return;
-            }
-
-            generateBtn.disabled = true;
-            btnText.style.display = 'none';
-            spinner.style.display = 'inline';
-
-            try {
-                const response = await fetch('/api/ai/generate-project', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({ goal: goal }),
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    showToast(result.message, 'success');
-                    document.getElementById('project-modal').style.display = 'none';
-                    loadDashboardData();
-                } else {
-                    showToast(result.message || 'Failed to generate project.', 'error');
-                }
-            } catch (error) {
-                showToast('A network error occurred.', 'error');
-            } finally {
-                generateBtn.disabled = false;
-                btnText.style.display = 'inline';
-                spinner.style.display = 'none';
-            }
-        }
-
-        async function createTaskManually(e) {
-            e.preventDefault();
-            const title = document.getElementById('task-title').value;
-            const projectId = document.getElementById('task-project').value;
-            const dueDate = document.getElementById('task-due-date').value;
-
-            if (!title || !projectId) {
-                showToast('Title and project are required.', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/tasks', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({
-                        title: title,
-                        project_id: projectId,
-                        due_date: dueDate ? new Date(dueDate).toISOString() : null,
-                    }),
-                });
-
-                // Capture the full response from the API
-                const newTaskData = await response.json();
-
-                if (response.ok && newTaskData.success) {
-                    showToast('Task created successfully!', 'success');
-                    document.getElementById('task-modal').style.display = 'none';
-
-                    // --- THIS IS THE NEW PART ---
-                    // If the new task has a due date, add it to the calendar right away.
-                    if (newTaskData.data.task.due_date) {
-                        calendar.addEvent({
-                            title: newTaskData.data.task.title,
-                            start: newTaskData.data.task.due_date,
-                            allDay: true
-                        });
-                    }
-
-                    // Refresh the dashboard lists to show the new task
-                    loadDashboardData();
-                } else {
-                    showToast(newTaskData.message || 'Failed to create task.', 'error');
-                }
-            } catch (error) {
-                showToast('A network error occurred.', 'error');
-            }
-        }
-
-        async function completeTask(taskId) {
-            try {
-                const response = await fetch(`/api/tasks/${taskId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({ status: 'completed' })
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showToast(result.message, 'success');
-                    loadDashboardData();
-                } else {
-                    showToast(result.message, 'error');
-                }
-            } catch (error) {
-                showToast('A network error occurred.', 'error');
-            }
-        }
-
-        async function deleteTask(taskId, taskName) {
-            const confirmation = prompt(`To delete this task, please type its name: "${taskName}"`);
-            if (confirmation === taskName) {
-                try {
-                    const response = await fetch(`/api/tasks/${taskId}`, {
-                        method: 'DELETE',
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    const result = await response.json();
-                    if (response.ok) {
-                        showToast('Task deleted successfully!', 'success');
-                        loadDashboardData();
-                    } else {
-                        showToast(result.message, 'error');
-                    }
-                } catch (error) {
-                    showToast('A network error occurred.', 'error');
-                }
-            }
-        }
-
-        async function deleteProject(projectId, projectName) {
-            const confirmation = prompt(`To delete this project and all its tasks, please type its name: "${projectName}"`);
-            if (confirmation === projectName) {
-                try {
-                    const response = await fetch(`/api/projects/${projectId}`, {
-                        method: 'DELETE',
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    const result = await response.json();
-                    if (response.ok) {
-                        showToast('Project deleted successfully!', 'success');
-                        loadDashboardData();
-                    } else {
-                        showToast(result.message, 'error');
-                    }
-                } catch (error) {
-                    showToast('A network error occurred.', 'error');
-                }
-            }
-        }
-
-        async function saveNotes() {
-            const content = document.getElementById('notes-area').value;
-            const projectId = document.getElementById('notes-project-select').value;
-            if (!projectId) {
-                showToast('Please select a project for the notes.', 'error');
-                return;
-            }
-            try {
-                const response = await fetch('/api/notes', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({ content: content, project_id: projectId })
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    showToast('Notes saved!', 'success');
-                } else {
-                    showToast(result.message, 'error');
-                }
-            } catch (error) {
-                showToast('A network error occurred.', 'error');
-            }
-        }
     </script>
 </body>
 
