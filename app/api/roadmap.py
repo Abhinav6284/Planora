@@ -42,65 +42,69 @@ def roadmap_data():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+# abhinav6284/planora/Planora-4ab166033a1dad0a7ca4cb76b7b906a7dd5dfb66/app/api/roadmap.py
+
+# ... (imports and roadmap_data function are unchanged) ...
+
 @bp.route('/chat', methods=['POST'])
 @jwt_required()
 def project_chat_agent():
     """
-    Handles AI chat conversations, determines user intent, and performs actions.
+    Handles AI chat conversations with a general-purpose project assistant.
     """
     data = request.get_json()
     user_id = int(get_jwt_identity())
-    # Can be null if creating a new project
-    project_id = data.get('project_id')
     user_message = data.get('message')
 
     if not user_message:
         return jsonify({'success': False, 'message': 'Message is required.'}), 400
 
-    # --- Build the Context for the AI ---
-    project_context = "No specific project is currently selected."
-    if project_id:
-        project = Project.query.filter_by(
-            id=project_id, user_id=user_id).first()
-        if project:
-            tasks_context = "\n".join(
-                [f"- Task ID {task.id}: '{task.title}' (Status: {task.status})" for task in project.tasks]
-            )
-            project_context = f"""
-            The user is currently focused on the following project:
-            Project ID: {project.id}
-            Project Name: {project.name}
-            Project Description: {project.description}
-            Tasks in this project:\n{tasks_context}
-            """
+    # --- Build a GENERAL Context for the AI ---
+    # We will provide a summary of all projects instead of focusing on one.
+    projects = Project.query.filter_by(user_id=user_id).order_by(
+        Project.created_at.desc()).all()
 
-    # --- Prompt Engineering with Function Calling ---
-    prompt = f"""You are 'Planora Agent', an AI that helps users manage their projects.
-    Your task is to analyze the user's message and the current project context, then decide on one of three actions: 'answer', 'create_project', or 'add_task'.
-    You MUST respond with a single, clean JSON object and nothing else.
+    if projects:
+        project_list = "\n".join(
+            [f"- {p.name} (ID: {p.id})" for p in projects])
+        general_context = f"""
+        The user has the following projects in their account:
+        {project_list}
+        You can help them add tasks to these projects if they mention a project by name or ID.
+        """
+    else:
+        general_context = "The user has not created any projects yet. You can help them create one."
 
-    --- CONTEXT ---
-    {project_context}
+    # --- NEW GENERAL-PURPOSE PROMPT ---
+    prompt = f"""You are 'Planora Agent', a smart AI project planning assistant.
+    Your goal is to help the user organize their goals into actionable plans within the Planora app.
+
+    **Core Rules:**
+    1.  **Be a Planner:** Your primary function is to help with project management. You can answer questions, create new projects from goals, or add tasks to existing projects.
+    2.  **Stay On Topic:** If the user's message is not related to planning, productivity, or managing their work, politely steer the conversation back to project management.
+    3.  **Strict JSON Output:** You MUST respond with a single, clean JSON object.
+
+    --- USER'S ACCOUNT CONTEXT ---
+    {general_context}
     --- END CONTEXT ---
 
     User's Message: "{user_message}"
 
     --- INSTRUCTIONS ---
-    1.  If the user is asking a question about the current project, choose the 'answer' action. Provide a helpful text response.
-    2.  If the user wants to create a brand NEW project (e.g., "make a new project for...", "generate a plan for..."), choose the 'create_project' action. The 'goal' should be the user's stated objective.
-    3.  If the user wants to add a new task to the CURRENTLY selected project (e.g., "add a task to...", "we need to do X"), choose the 'add_task' action. The 'title' should be the task's name.
+    Analyze the user's message and choose the best action.
+    - If they are asking a general question or just chatting, choose 'answer'.
+    - If they state a new goal (e.g., "I want to learn guitar", "plan a marketing campaign"), choose 'create_project'.
+    - If they want to add a task to an existing project (e.g., "add 'design logo' to the marketing project"), choose 'add_task'. You MUST also identify the 'project_name' they are referring to from the context.
 
-    Choose one of the following JSON formats for your response:
-    - For answering questions: {{"action": "answer", "response": "Your helpful answer here."}}
-    - For creating a new project: {{"action": "create_project", "goal": "The user's goal for the new project."}}
-    - For adding a task to the current project: {{"action": "add_task", "title": "The title of the new task."}}
+    Choose one of the following JSON formats:
+    - {{"action": "answer", "response": "Your helpful answer."}}
+    - {{"action": "create_project", "goal": "The user's goal for the new project."}}
+    - {{"action": "add_task", "title": "The title of the new task.", "project_name": "The name of the project to add the task to."}}
     """
 
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
-
-        # Clean up the response to ensure it's valid JSON
         cleaned_response = response.text.strip().replace('```json', '').replace('```', '')
         action_plan = json.loads(cleaned_response)
 
@@ -110,26 +114,34 @@ def project_chat_agent():
             return jsonify({'success': True, 'reply': action_plan.get('response'), 'action_taken': 'none'})
 
         elif action == 'create_project':
-            # This is a placeholder for the more complex project generation logic.
-            # In a real app, you would call your existing AI project generation function here.
-            new_project = Project(
-                name=f"New Project: {action_plan.get('goal')}", user_id=user_id)
+            goal = action_plan.get('goal', 'Untitled Project')
+            new_project = Project(name=goal, user_id=user_id,
+                                  description="Generated by Planora AI.")
             db.session.add(new_project)
             db.session.commit()
-            return jsonify({'success': True, 'reply': f"I have created a new project for you: '{new_project.name}'. I recommend using the 'Generate with AI' button for a full plan.", 'action_taken': 'reload'})
+            return jsonify({'success': True, 'reply': f"Great! I've created a new project for you: '{new_project.name}'.", 'action_taken': 'reload'})
 
         elif action == 'add_task':
-            if not project_id:
-                return jsonify({'success': True, 'reply': "Please select a project first before adding a task.", 'action_taken': 'none'})
+            project_name = action_plan.get('project_name')
+            task_title = action_plan.get('title')
 
-            new_task = Task(title=action_plan.get('title'), user_id=user_id)
-            project = Project.query.get(project_id)
+            if not project_name or not task_title:
+                return jsonify({'success': True, 'reply': "I can add that task for you, but which project should it go to?", 'action_taken': 'none'})
+
+            # Find the project by name (case-insensitive search)
+            project = Project.query.filter(Project.name.ilike(
+                f"%{project_name}%"), Project.user_id == user_id).first()
+
+            if not project:
+                return jsonify({'success': True, 'reply': f"I couldn't find a project named '{project_name}'. Please choose from one of your existing projects.", 'action_taken': 'none'})
+
+            new_task = Task(title=task_title, user_id=user_id)
             project.tasks.append(new_task)
             db.session.commit()
             return jsonify({'success': True, 'reply': f"OK, I've added the task '{new_task.title}' to the '{project.name}' project.", 'action_taken': 'reload'})
 
         else:
-            return jsonify({'success': True, 'reply': "I'm not sure how to handle that, but I'm learning!", 'action_taken': 'none'})
+            return jsonify({'success': True, 'reply': "I'm not sure how to handle that, but I can help you plan your projects.", 'action_taken': 'none'})
 
     except Exception as e:
         return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500

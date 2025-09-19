@@ -5,332 +5,335 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Planora</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --light-gray: #f5f5f5;
-            --medium-gray: #ecf0f1;
-            --dark-gray: #34495e;
-            --success-color: #2ecc71;
-            --error-color: #e74c3c;
-        }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!DOCTYPE html>
+    <html lang="en">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - Planora</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--light-gray);
-            color: #333;
-        }
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
-        .dashboard {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            height: 100vh;
-        }
-
-        .sidebar {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar h2 {
-            font-size: 24px;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .sidebar .nav-item {
-            padding: 12px 15px;
-            margin: 5px 0;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: white;
-        }
-
-        .sidebar .nav-item:hover {
-            background-color: var(--dark-gray);
-        }
-
-        .sidebar .nav-item.active {
-            background-color: var(--primary-color);
-        }
-
-        .sidebar .logout {
-            margin-top: auto;
-        }
-
-        .main-content {
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* New styles for section switching */
-        .page-section {
-            display: none;
-            /* Hide sections by default */
-        }
-
-        .page-section.active {
-            display: block;
-            /* Show the active section */
-        }
-
-        .header {
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 600;
-        }
-
-        .header p {
-            color: #666;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card,
-        .content-area {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .stat-card .value {
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .content-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid var(--medium-gray);
-        }
-
-        th {
-            font-weight: 600;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 30px;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 550px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+        <style>
+            :root {
+                --primary-color: #3498db;
+                --secondary-color: #2c3e50;
+                --background-color: #f4f7f9;
+                --sidebar-bg: #233140;
+                --card-bg: #ffffff;
+                --text-primary: #333;
+                --text-secondary: #666;
+                --border-color: #e_a_ecef;
+                --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                --border-radius: 8px;
             }
 
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
-            to {
-                transform: translateY(0);
+            body {
+                font-family: var(--font-family);
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                overflow: hidden;
             }
-        }
 
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+            .dashboard {
+                display: grid;
+                grid-template-columns: 240px 1fr;
+                height: 100vh;
+            }
 
-        .modal-content form label {
-            display: block;
-            margin-top: 15px;
-            font-weight: 500;
-        }
+            .sidebar {
+                background-color: var(--sidebar-bg);
+                color: white;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+            }
 
-        .modal-content form input,
-        .modal-content form textarea,
-        .modal-content form select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+            .sidebar h2 {
+                font-size: 24px;
+                text-align: center;
+                margin-bottom: 40px;
+            }
 
-        .modal-content form button {
-            margin-top: 20px;
-            width: 100%;
-        }
+            .sidebar .nav-item {
+                padding: 12px 15px;
+                margin: 5px 0;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-decoration: none;
+                color: #bdc3c7;
+            }
 
-        /* Toast Notification */
-        .toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 16px;
-            position: fixed;
-            z-index: 2000;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 30px;
-            font-size: 16px;
-            transition: visibility 0.5s, opacity 0.5s linear;
-            opacity: 0;
-        }
+            .sidebar .nav-item:hover {
+                background-color: #34495e;
+                color: white;
+            }
 
-        .toast.show {
-            visibility: visible;
-            opacity: 1;
-        }
+            .sidebar .nav-item.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
 
-        .toast.success {
-            background-color: var(--success-color);
-        }
+            .sidebar .logout {
+                margin-top: auto;
+            }
 
-        .toast.error {
-            background-color: var(--error-color);
-        }
+            .main-content {
+                padding: 30px;
+                overflow-y: auto;
+            }
 
-        /* Focus Timer */
-        .focus-timer {
-            text-align: center;
-        }
+            .page-section {
+                display: none;
+            }
 
-        .focus-timer #timer-display {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
+            .page-section.active {
+                display: block;
+                animation: fadeIn 0.5s;
+            }
 
-        .roadmap-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
+            .header {
+                margin-bottom: 30px;
+            }
 
-        .roadmap-card {
-            background-color: #f9f9f9;
-            border-left: 5px solid var(--primary-color);
-            padding: 20px;
-            border-radius: 8px;
-        }
+            .header h1 {
+                font-size: 28px;
+                font-weight: 600;
+            }
 
-        .roadmap-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
+            .header p {
+                color: var(--text-secondary);
+            }
+
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 30px;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+
+            .stat-card,
+            .content-area {
+                background-color: var(--card-bg);
+                padding: 25px;
+                border-radius: var(--border-radius);
+                box-shadow: var(--shadow);
+                margin-bottom: 30px;
+            }
+
+            .stat-card h3 {
+                color: var(--text-secondary);
+                font-size: 14px;
+                margin-bottom: 10px;
+                font-weight: 500;
+            }
+
+            .stat-card .value {
+                font-size: 28px;
+                font-weight: 600;
+                color: var(--secondary-color);
+            }
+
+            .content-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .content-header h2 {
+                font-size: 20px;
+                font-weight: 600;
+            }
+
+            .btn {
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn:hover {
+                background-color: #2980b9;
+                transform: translateY(-2px);
+            }
+
+            /* Scrollable Task List */
+            .task-list-container {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th,
+            td {
+                text-align: left;
+                padding: 12px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            th {
+                font-weight: 600;
+                font-size: 12px;
+                text-transform: uppercase;
+                color: var(--text-secondary);
+            }
+
+            /* --- Full Page Chat Modal --- */
+            .chat-modal {
+                display: none;
+                position: fixed;
+                z-index: 1050;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(5px);
+                animation: fadeIn 0.3s;
+            }
+
+            .chat-modal-content {
+                display: flex;
+                flex-direction: column;
+                height: 90%;
+                width: 80%;
+                max-width: 800px;
+                margin: 5vh auto;
+                background: white;
+                border-radius: var(--border-radius);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .chat-header {
+                padding: 15px 20px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .chat-header h2 {
+                font-size: 18px;
+            }
+
+            .chat-header .close-btn {
+                font-size: 28px;
+                cursor: pointer;
+                color: #888;
+            }
+
+            #chat-box {
+                flex-grow: 1;
+                padding: 20px;
+                overflow-y: auto;
+                background: #f9f9f9;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .chat-message {
+                max-width: 75%;
+                padding: 10px 15px;
+                border-radius: 18px;
+                line-height: 1.5;
+            }
+
+            .chat-message.user {
+                background-color: var(--primary-color);
+                color: white;
+                align-self: flex-end;
+                border-bottom-right-radius: 4px;
+            }
+
+            .chat-message.ai {
+                background-color: #e9ecef;
+                color: black;
+                align-self: flex-start;
+                border-bottom-left-radius: 4px;
+            }
+
+            .chat-footer {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            #chat-form {
+                display: flex;
+                gap: 10px;
+            }
+
+            #chat-input {
+                flex-grow: 1;
+                padding: 12px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .typing-indicator {
+                align-self: flex-start;
+                color: var(--text-secondary);
+                font-style: italic;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+        </style>
+    </head>
 
 <body>
     <div class="dashboard">
         <div class="sidebar">
             <h2><i class="fas fa-rocket"></i> Planora</h2>
             <a onclick="showSection('overview')" class="nav-item active"><i class="fas fa-home"></i> Overview</a>
-            <a onclick="showSection('roadmap')" class="nav-item"><i class="fas fa-road"></i> Roadmap</a>
+            <a onclick="showSection('roadmap')" class="nav-item"><i class="fas fa-road"></i> Roadmap & AI</a>
             <a href="#" class="nav-item logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
 
@@ -340,7 +343,6 @@
                     <h1>Dashboard</h1>
                     <p>Welcome back! Here's your project overview.</p>
                 </div>
-
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h3>Total Projects</h3>
@@ -359,14 +361,12 @@
                         <div class="value" id="pending-tasks">0</div>
                     </div>
                 </div>
-
                 <div class="dashboard-grid">
                     <div class="main-column">
                         <div class="content-area">
                             <div class="content-header">
                                 <h2>Today's Schedule</h2>
-                                <button class="btn" id="add-task-btn"><i class="fas fa-plus"></i> Add Task
-                                    Manually</button>
+                                <button class="btn" id="add-task-btn"><i class="fas fa-plus"></i> Add Task</button>
                             </div>
                             <table id="today-tasks-table">
                                 <thead>
@@ -381,7 +381,6 @@
                                 <tbody id="today-tasks-body"></tbody>
                             </table>
                         </div>
-
                         <div class="content-area">
                             <div class="content-header">
                                 <h2>Calendar</h2>
@@ -389,20 +388,11 @@
                             <div id="calendar"></div>
                         </div>
                     </div>
-
                     <div class="side-column">
-                        <div class="content-area focus-timer">
-                            <h2>Focus Timer</h2>
-                            <div id="timer-display">25:00</div>
-                            <select id="focus-task-select"></select>
-                            <button class="btn" id="start-timer-btn" style="margin-top: 15px;">Start Focus</button>
-                        </div>
-
                         <div class="content-area">
                             <div class="content-header">
-                                <h2>Projects</h2>
-                                <button class="btn" id="add-project-btn"><i class="fas fa-magic"></i> Generate with
-                                    AI</button>
+                                <h2>Projects</h2><button class="btn" id="add-project-btn"><i class="fas fa-magic"></i>
+                                    Generate with AI</button>
                             </div>
                             <table id="projects-table">
                                 <thead>
@@ -414,11 +404,11 @@
                                 <tbody></tbody>
                             </table>
                         </div>
-
                         <div class="content-area">
                             <h2>Notes</h2>
-                            <select id="notes-project-select" class="form-control"></select>
-                            <textarea id="notes-area" rows="10"></textarea>
+                            <select id="notes-project-select"
+                                style="width:100%; padding: 8px; margin-bottom: 10px;"></select>
+                            <textarea id="notes-area" rows="8" style="width:100%; padding: 8px;"></textarea>
                             <button class="btn" id="save-notes-btn" style="margin-top: 10px;">Save Notes</button>
                         </div>
                     </div>
@@ -428,535 +418,581 @@
             <div id="roadmap-section" class="page-section">
                 <div class="header">
                     <div class="content-header">
-                        <h1>Project Roadmaps & AI Chat</h1>
-                        <button id="export-pdf-btn" class="btn">
-                            <i class="fas fa-file-pdf"></i> Export as PDF
-                        </button>
+                        <h1>Project Roadmaps & AI Assistant</h1>
+                        <button id="export-pdf-btn" class="btn"><i class="fas fa-file-pdf"></i> Export as PDF</button>
                     </div>
-                    <p>A high-level view of your projects and an AI assistant to help you with them.</p>
+                    <p>Visualize project progress and chat with your AI assistant to manage tasks.</p>
                 </div>
-            </div>
-
-            <div class="dashboard-grid">
-                <div id="roadmap-container" class="space-y-8">
-                </div>
-
-                <div class="content-area">
-                    <h2 class="text-2xl font-bold mb-4">Chat with Planora AI</h2>
-
-                    <label for="chat-project-select" class="block mb-2 text-sm font-medium text-gray-700">Select a
-                        Project to
-                        discuss:</label>
-                    <select id="chat-project-select" class="w-full p-2 mb-4 border rounded-md"></select>
-
-                    <div id="chat-box" class="h-96 border rounded-md p-4 overflow-y-auto bg-gray-50 mb-4">
-                        <div class="text-gray-500">Please select a project to begin chatting.</div>
+                <div class="dashboard-grid">
+                    <div id="roadmap-container"></div>
+                    <div class="content-area">
+                        <h2 class="content-header">Chat with Planora AI</h2>
+                        <select id="chat-project-select"
+                            style="width: calc(100% - 40px); margin: 20px; padding: 10px;"></select>
+                        <div id="chat-box">
+                            <div class="chat-message ai">Please select a project to begin.</div>
+                        </div>
+                        <form id="chat-form">
+                            <input type="text" id="chat-input" placeholder="Add a task for..." disabled>
+                            <button type="submit" id="chat-send-btn" class="btn" disabled>Send</button>
+                        </form>
                     </div>
-
-                    <form id="chat-form" class="flex gap-2">
-                        <input type="text" id="chat-input" class="flex-grow p-2 border rounded-md"
-                            placeholder="Ask about your project..." disabled>
-                        <button type="submit" id="chat-send-btn" class="btn" disabled>Send</button>
-                    </form>
                 </div>
             </div>
         </div>
-        <div id="toast-notification" class="toast"></div>
+    </div>
 
-        <div id="project-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" id="close-project-modal">&times;</span>
-                <h2>Generate a New Project Plan</h2>
-                <form id="project-form">
-                    <label for="project-goal">Describe your goal, and our AI will create a roadmap for you:</label>
-                    <textarea id="project-goal" rows="4"
-                        placeholder="e.g., Learn Flask and build a personal blog website in 2 weeks"></textarea>
-                    <button type="submit" class="btn" id="generate-btn">
-                        <span id="generate-btn-text">Generate Plan</span>
-                        <span id="generate-spinner" style="display:none;">Generating...</span>
-                    </button>
-                </form>
-            </div>
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-project-modal">&times;</span>
+            <h2>Generate a New Project Plan</h2>
+            <form id="project-form">
+                <label for="project-goal">Describe your goal, and our AI will create a roadmap for you:</label>
+                <textarea id="project-goal" rows="4"
+                    placeholder="e.g., Learn Flask and build a personal blog website in 2 weeks"></textarea>
+                <button type="submit" class="btn" id="generate-btn">
+                    <span id="generate-btn-text">Generate Plan</span>
+                    <span id="generate-spinner" style="display:none;">Generating...</span>
+                </button>
+            </form>
         </div>
-
-        <div id="task-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" id="close-task-modal">&times;</span>
-                <h2>Create New Task</h2>
-                <form id="task-form">
-                    <label for="task-title">Task Title:</label>
-                    <input type="text" id="task-title" required>
-                    <label for="task-project">Assign to Project:</label>
-                    <select id="task-project" required></select>
-                    <label for="task-due-date">Due Date:</label>
-                    <input type="date" id="task-due-date">
-                    <button type="submit" class="btn">Create Task</button>
-                </form>
-            </div>
+    </div>
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-task-modal">&times;</span>
+            <h2>Create New Task</h2>
+            <form id="task-form">
+                <label for="task-title">Task Title:</label><input type="text" id="task-title" required>
+                <label for="task-project">Assign to Project:</label><select id="task-project" required></select>
+                <label for="task-due-date">Due Date:</label><input type="date" id="task-due-date">
+                <button type="submit" class="btn">Create Task</button>
+            </form>
         </div>
+    </div>
+    <div id="toast-notification" class="toast"></div>
+    <script>
+        // --- Full, Consolidated JavaScript ---
+        let token = localStorage.getItem('planora_token');
+        let allProjects = [];
+        let allTasks = [];
+        let calendar;
 
-        <script>
-            const token = localStorage.getItem('planora_token');
-            let allProjects = [];
-            let allTasks = [];
-            let calendar;
+        // --- Core Functions ---
+        function showSection(sectionId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(sectionId + '-section').classList.add('active');
+            document.querySelector(`.nav-item[onclick="showSection('${sectionId}')"]`).classList.add('active');
+            if (sectionId === 'roadmap') loadRoadmapData();
+        }
 
-            // --- SECTION SWITCHING ---
-            function showSection(sectionId) {
-                // Hide all page sections
-                document.querySelectorAll('.page-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-                // Deactivate all nav links
-                document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-
-                // Show the target section and activate the corresponding link
-                document.getElementById(sectionId + '-section').classList.add('active');
-                document.querySelector(`.nav-item[onclick="showSection('${sectionId}')"]`).classList.add('active');
-
-                // Load data specifically for the roadmap section when it's shown
-                if (sectionId === 'roadmap') {
-                    loadRoadmapData();
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token');
+            if (urlToken) {
+                localStorage.setItem('planora_token', urlToken);
+                token = urlToken;
+                window.history.replaceState({}, document.title, "/dashboard");
             }
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+            initializeCalendar();
+            loadDashboardData();
+            setupEventListeners();
+        });
 
-            // --- INITIALIZATION ---
-            document.addEventListener('DOMContentLoaded', () => {
-                if (!token) {
-                    window.location.href = '/login';
-                    return;
-                }
-                initializeCalendar();
-                loadDashboardData(); // Load the default overview data
-                setupEventListeners();
+        function setupEventListeners() {
+            // Modals
+            document.getElementById('add-project-btn').onclick = () => (document.getElementById('project-modal').style.display = 'block');
+            document.getElementById('add-task-btn').onclick = () => (document.getElementById('task-modal').style.display = 'block');
+            document.getElementById('close-project-modal').onclick = () => (document.getElementById('project-modal').style.display = 'none');
+            document.getElementById('close-task-modal').onclick = () => (document.getElementById('task-modal').style.display = 'none');
+            document.getElementById('open-chat-btn').onclick = () => document.getElementById('chat-modal').style.display = 'block';
+            document.getElementById('close-chat-modal').onclick = () => document.getElementById('chat-modal').style.display = 'none';
+
+            window.onclick = (event) => {
+                if (event.target == document.getElementById('project-modal')) document.getElementById('project-modal').style.display = 'none';
+                if (event.target == document.getElementById('task-modal')) document.getElementById('task-modal').style.display = 'none';
+            };
+
+            // Forms
+            document.getElementById('project-form').addEventListener('submit', createProjectWithAI);
+            document.getElementById('task-form').addEventListener('submit', createTaskManually);
+            document.getElementById('chat-form').addEventListener('submit', sendMessage);
+
+            // Buttons and Inputs
+            document.getElementById('logout-btn').onclick = () => {
+                localStorage.removeItem('planora_token');
+                window.location.href = '/login';
+            };
+            document.getElementById('start-timer-btn').addEventListener('click', () => {
+                if (isTimerRunning) stopTimer();
+                else startTimer();
             });
+            document.getElementById('save-notes-btn').addEventListener('click', saveNotes);
+            document.getElementById('focus-task-select').addEventListener('change', updateTimerDisplayFromTask);
+            document.getElementById('export-pdf-btn').addEventListener('click', exportRoadmapToPDF);
+        }
 
-            function setupEventListeners() {
-                // Modals
-                document.getElementById('add-project-btn').onclick = () => (document.getElementById('project-modal').style.display = 'block');
-                document.getElementById('add-task-btn').onclick = () => (document.getElementById('task-modal').style.display = 'block');
-                document.getElementById('close-project-modal').onclick = () => (document.getElementById('project-modal').style.display = 'none');
-                document.getElementById('close-task-modal').onclick = () => (document.getElementById('task-modal').style.display = 'none');
-
-                window.onclick = (event) => {
-                    if (event.target == document.getElementById('project-modal')) document.getElementById('project-modal').style.display = 'none';
-                    if (event.target == document.getElementById('task-modal')) document.getElementById('task-modal').style.display = 'none';
-                };
-
-                // Forms
-                document.getElementById('project-form').addEventListener('submit', createProjectWithAI);
-                document.getElementById('task-form').addEventListener('submit', createTaskManually);
-                document.getElementById('chat-form').addEventListener('submit', sendMessage);
-
-                // Buttons and Inputs
-                document.getElementById('logout-btn').onclick = () => {
-                    localStorage.removeItem('planora_token');
-                    window.location.href = '/login';
-                };
-                document.getElementById('start-timer-btn').addEventListener('click', () => {
-                    if (isTimerRunning) stopTimer();
-                    else startTimer();
-                });
-                document.getElementById('save-notes-btn').addEventListener('click', saveNotes);
-                document.getElementById('focus-task-select').addEventListener('change', updateTimerDisplayFromTask);
-                document.getElementById('export-pdf-btn').addEventListener('click', exportRoadmapToPDF);
-            }
-
-            // --- DATA LOADING ---
-            async function loadDashboardData() {
-                try {
-                    const response = await fetch('/api/dashboard/data', { headers: { Authorization: `Bearer ${token}` } });
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        const { user, stats, projects, tasks, calendar_tasks } = result.data;
-                        allProjects = projects;
-                        allTasks = tasks;
-                        renderUI(user, stats, projects, tasks, calendar_tasks);
-                    } else {
-                        if (response.status === 401 || response.status === 422) window.location.href = '/login';
-                        else showToast(result.message || 'Could not load dashboard data.', 'error');
-                    }
-                } catch (error) {
-                    showToast('Could not connect to the server.', 'error');
+        // --- DATA LOADING ---
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/dashboard/data', { headers: { Authorization: `Bearer ${token}` } });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    const { user, stats, projects, tasks, calendar_tasks } = result.data;
+                    allProjects = projects;
+                    allTasks = tasks;
+                    renderUI(user, stats, projects, tasks, calendar_tasks);
+                } else {
+                    if (response.status === 401 || response.status === 422) window.location.href = '/login';
+                    else showToast(result.message || 'Could not load dashboard data.', 'error');
                 }
+            } catch (error) {
+                showToast('Could not connect to the server.', 'error');
             }
+        }
 
-            async function loadRoadmapData() {
-                const container = document.getElementById('roadmap-container');
-                container.innerHTML = '<p>Loading roadmaps...</p>';
-                try {
-                    const response = await fetch('/api/roadmap/data', { headers: { Authorization: `Bearer ${token}` } });
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        renderRoadmaps(result.data.projects);
-                        setupChat(result.data.projects); // Setup chat after loading roadmap data
-                    } else {
-                        container.innerHTML = `<p class="text-red-500">Error: ${result.message}</p>`;
-                    }
-                } catch (error) {
-                    container.innerHTML = `<p class="text-red-500">A network error occurred.</p>`;
+        async function loadRoadmapData() {
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = '<p>Loading roadmaps...</p>';
+            try {
+                const response = await fetch('/api/roadmap/data', { headers: { Authorization: `Bearer ${token}` } });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    renderRoadmaps(result.data.projects);
+                    setupChat(result.data.projects);
+                } else {
+                    container.innerHTML = `<p class="text-red-500">Error: ${result.message}</p>`;
                 }
+            } catch (error) {
+                container.innerHTML = `<p class="text-red-500">A network error occurred.</p>`;
             }
+        }
 
-            // --- UI RENDERING ---
-            function renderUI(user, stats, projects, tasks, calendar_tasks) {
-                // Render overview section
-                document.querySelector('#overview-section .header p').textContent = `Welcome back, ${user.first_name}! Let's get productive.`;
-                document.getElementById('total-projects').textContent = stats.total;
-                document.getElementById('active-tasks').textContent = stats.pending;
-                document.getElementById('completed-tasks').textContent = stats.completed;
-                document.getElementById('pending-tasks').textContent = stats.pending;
-                renderProjectsTable(projects);
-                renderTaskTables(tasks);
-                populateProjectDropdowns(projects, tasks);
-                updateCalendarEvents(calendar_tasks);
+        // --- UI RENDERING ---
+        function renderUI(user, stats, projects, tasks, calendar_tasks) {
+            document.querySelector('#overview-section .header p').textContent = `Welcome back, ${user.first_name}! Let's get productive.`;
+            document.getElementById('total-projects').textContent = stats.total;
+            document.getElementById('active-tasks').textContent = stats.pending;
+            document.getElementById('completed-tasks').textContent = stats.completed;
+            document.getElementById('pending-tasks').textContent = stats.pending;
+            renderProjectsTable(projects);
+            renderTaskTables(tasks);
+            populateProjectDropdowns(projects, tasks);
+            updateCalendarEvents(calendar_tasks);
+        }
+
+        function renderProjectsTable(projects) {
+            const projectsTableBody = document.querySelector('#projects-table tbody');
+            projectsTableBody.innerHTML = '';
+            projects.forEach(p => {
+                const row = projectsTableBody.insertRow();
+                row.innerHTML = `<td>${p.name}</td><td><button class="btn" onclick="deleteProject(${p.id}, '${p.name}')">Delete</button></td>`;
+            });
+        }
+
+        function renderTaskTables(tasks) {
+            const tbody = document.getElementById('today-tasks-body');
+            tbody.innerHTML = '';
+            const today = new Date().toISOString().split('T')[0];
+            tasks.filter(t => t.due_date && t.due_date.startsWith(today)).forEach(t => {
+                const project = allProjects.find(p => p.id === t.project_id) || { name: 'N/A' };
+                tbody.innerHTML += `<tr><td>${t.title}</td><td>${project.name}</td><td>${t.status}</td><td>...</td></tr>`;
+            });
+        }
+
+        function renderRoadmaps(projects) {
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = '';
+            if (projects.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No projects found. Create one with AI to see its roadmap.</p>';
+                return;
             }
-
-            function renderProjectsTable(projects) {
-                const projectsTableBody = document.querySelector('#projects-table tbody');
-                projectsTableBody.innerHTML = '';
-                projects.forEach(p => {
-                    const row = projectsTableBody.insertRow();
-                    row.innerHTML = `<td>${p.name}</td><td><button class="btn" onclick="deleteProject(${p.id}, '${p.name}')">Delete</button></td>`;
-                });
-            }
-
-            function renderTaskTables(tasks) {
-                const today = new Date().toISOString().split('T')[0];
-                const todayTasksBody = document.getElementById('today-tasks-body');
-                todayTasksBody.innerHTML = '';
-                tasks.filter(t => t.due_date && t.due_date.startsWith(today)).forEach(t => {
-                    const project = allProjects.find(p => p.id === t.project_id) || { name: 'N/A' };
-                    const row = todayTasksBody.insertRow();
-                    row.innerHTML = `
-                <td>${t.title}</td>
-                <td>${project.name}</td>
-                <td>${t.estimated_duration ? t.estimated_duration + ' min' : 'N/A'}</td>
-                <td>${t.status}</td>
-                <td>
-                    <button class="btn" onclick="completeTask(${t.id})">Complete</button>
-                    <button class="btn" onclick="deleteTask(${t.id}, '${t.title}')">Delete</button>
-                </td>`;
-                });
-            }
-
-            function renderRoadmaps(projects) {
-                const container = document.getElementById('roadmap-container');
-                container.innerHTML = '';
-                if (projects.length === 0) {
-                    container.innerHTML = '<p class="text-gray-500">No projects found. Create one with AI to see its roadmap.</p>';
-                    return;
+            projects.forEach(project => {
+                const projectElement = document.createElement('div');
+                projectElement.className = 'bg-white p-6 rounded-lg shadow-md';
+                let tasksHtml = '<ul class="list-disc list-inside mt-4 space-y-2">';
+                if (project.tasks.length > 0) {
+                    project.tasks.forEach(task => {
+                        const statusClass = task.status === 'completed' ? 'text-green-500' : 'text-gray-500';
+                        tasksHtml += `<li class="text-gray-700">${task.title} - <span class="text-sm font-semibold ${statusClass}">${task.status}</span></li>`;
+                    });
+                } else {
+                    tasksHtml += '<li class="text-gray-500">No tasks for this project yet.</li>';
                 }
-                projects.forEach(project => {
-                    const projectElement = document.createElement('div');
-                    projectElement.className = 'bg-white p-6 rounded-lg shadow-md';
-                    let tasksHtml = '<ul class="list-disc list-inside mt-4 space-y-2">';
-                    if (project.tasks.length > 0) {
-                        project.tasks.forEach(task => {
-                            const statusClass = task.status === 'completed' ? 'text-green-500' : 'text-gray-500';
-                            tasksHtml += `<li class="text-gray-700">${task.title} - <span class="text-sm font-semibold ${statusClass}">${task.status}</span></li>`;
-                        });
-                    } else {
-                        tasksHtml += '<li class="text-gray-500">No tasks for this project yet.</li>';
-                    }
-                    tasksHtml += '</ul>';
-                    projectElement.innerHTML = `
-                <h2 class="text-2xl font-bold text-gray-800">${project.name} (${project.status})</h2>
-                <p class="text-gray-600 mt-2">${project.description || ''}</p>
-                ${tasksHtml}`;
-                    container.appendChild(projectElement);
-                });
-            }
+                tasksHtml += '</ul>';
+                projectElement.innerHTML = `
+                        <h2 class="text-2xl font-bold text-gray-800">${project.name} (${project.status})</h2>
+                        <p class="text-gray-600 mt-2">${project.description || ''}</p>
+                        ${tasksHtml}`;
+                container.appendChild(projectElement);
+            });
+        }
 
-            function populateProjectDropdowns(projects, tasks) {
-                const taskProjectSelect = document.getElementById('task-project');
-                const focusTaskSelect = document.getElementById('focus-task-select');
-                const notesProjectSelect = document.getElementById('notes-project-select');
-
-                taskProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
-                focusTaskSelect.innerHTML = '<option value="">-- Select Task for Timer --</option>';
-                notesProjectSelect.innerHTML = '<option value="">-- Select Project for Notes --</option>';
-
-                projects.forEach(p => {
-                    taskProjectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-                    notesProjectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-                });
-                tasks.filter(t => t.status !== 'completed').forEach(t => {
-                    focusTaskSelect.innerHTML += `<option value="${t.id}">${t.title}</option>`;
-                });
-            }
-
-            // --- CALENDAR ---
-            function initializeCalendar() {
-                const calendarEl = document.getElementById('calendar');
-                calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-                    events: []
-                });
-                calendar.render();
-            }
-
-            function updateCalendarEvents(tasks) {
-                const calendarEvents = tasks.map(task => ({
-                    title: task.title,
-                    start: task.start,
-                    allDay: true,
-                }));
-                calendar.getEventSources().forEach(source => source.remove());
-                calendar.addEventSource(calendarEvents);
-            }
-
-            // --- FOCUS TIMER ---
-            const timerDisplay = document.getElementById('timer-display');
-            const startTimerBtn = document.getElementById('start-timer-btn');
+        function populateProjectDropdowns(projects, tasks) {
+            const taskProjectSelect = document.getElementById('task-project');
             const focusTaskSelect = document.getElementById('focus-task-select');
-            let timer;
-            let timeRemaining = 25 * 60;
-            let isTimerRunning = false;
-            let currentSessionId = null;
+            const notesProjectSelect = document.getElementById('notes-project-select');
+            taskProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
+            focusTaskSelect.innerHTML = '<option value="">-- Select Task for Timer --</option>';
+            notesProjectSelect.innerHTML = '<option value="">-- Select Project for Notes --</option>';
+            projects.forEach(p => {
+                taskProjectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                notesProjectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            });
+            tasks.filter(t => t.status !== 'completed').forEach(t => {
+                focusTaskSelect.innerHTML += `<option value="${t.id}">${t.title}</option>`;
+            });
+        }
 
-            function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        // --- CALENDAR ---
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
+                events: []
+            });
+            calendar.render();
+        }
+
+        function updateCalendarEvents(tasks) {
+            const calendarEvents = tasks.map(task => ({
+                title: task.title,
+                start: task.start,
+                allDay: true,
+            }));
+            calendar.getEventSources().forEach(source => source.remove());
+            calendar.addEventSource(calendarEvents);
+        }
+
+        // --- FOCUS TIMER ---
+        const timerDisplay = document.getElementById('timer-display');
+        const startTimerBtn = document.getElementById('start-timer-btn');
+        const focusTaskSelect = document.getElementById('focus-task-select');
+        let timer;
+        let timeRemaining = 25 * 60;
+        let isTimerRunning = false;
+        let currentSessionId = null;
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplayFromTask() {
+            if (isTimerRunning) {
+                showToast('Please stop the current session before selecting a new task.', 'error');
+                focusTaskSelect.value = focusTaskSelect.dataset.runningTaskId || "";
+                return;
             }
+            const taskId = parseInt(focusTaskSelect.value);
+            if (!taskId) {
+                timeRemaining = 25 * 60;
+                timerDisplay.textContent = formatTime(timeRemaining);
+                return;
+            }
+            const selectedTask = allTasks.find(task => task.id === taskId);
+            if (selectedTask && selectedTask.estimated_duration) {
+                timeRemaining = selectedTask.estimated_duration * 60;
+            } else {
+                timeRemaining = 25 * 60;
+                showToast('Selected task has no duration. Defaulting to 25 minutes.', 'info');
+            }
+            timerDisplay.textContent = formatTime(timeRemaining);
+        }
 
-            function updateTimerDisplayFromTask() {
-                if (isTimerRunning) {
-                    showToast('Please stop the current session before selecting a new task.', 'error');
-                    focusTaskSelect.value = focusTaskSelect.dataset.runningTaskId || "";
-                    return;
-                }
-                const taskId = parseInt(focusTaskSelect.value);
-                if (!taskId) {
-                    timeRemaining = 25 * 60;
-                    timerDisplay.textContent = formatTime(timeRemaining);
-                    return;
-                }
-                const selectedTask = allTasks.find(task => task.id === taskId);
-                if (selectedTask && selectedTask.estimated_duration) {
-                    timeRemaining = selectedTask.estimated_duration * 60;
+        async function startTimer() {
+            if (isTimerRunning) return;
+            const taskId = focusTaskSelect.value;
+            if (!taskId) {
+                showToast('Please select a task to focus on.', 'error');
+                return;
+            }
+            focusTaskSelect.dataset.runningTaskId = taskId;
+            try {
+                const response = await fetch('/api/focus_sessions/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ task_id: taskId }),
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    currentSessionId = result.session_id;
+                    isTimerRunning = true;
+                    startTimerBtn.textContent = 'Stop Focus';
+                    timer = setInterval(updateTimer, 1000);
+                    showToast('Focus session started!', 'success');
                 } else {
-                    timeRemaining = 25 * 60;
-                    showToast('Selected task has no duration. Defaulting to 25 minutes.', 'info');
+                    showToast(result.message, 'error');
                 }
-                timerDisplay.textContent = formatTime(timeRemaining);
+            } catch (error) {
+                showToast('Could not start the session.', 'error');
             }
+        }
 
-            async function startTimer() {
-                if (isTimerRunning) return;
-                const taskId = focusTaskSelect.value;
-                if (!taskId) {
-                    showToast('Please select a task to focus on.', 'error');
-                    return;
-                }
-                focusTaskSelect.dataset.runningTaskId = taskId;
-                try {
-                    const response = await fetch('/api/focus_sessions/start', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                        body: JSON.stringify({ task_id: taskId }),
-                    });
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        currentSessionId = result.session_id;
-                        isTimerRunning = true;
-                        startTimerBtn.textContent = 'Stop Focus';
-                        timer = setInterval(updateTimer, 1000);
-                        showToast('Focus session started!', 'success');
-                    } else {
-                        showToast(result.message, 'error');
+        async function stopTimer() {
+            if (!isTimerRunning) return;
+            clearInterval(timer);
+            isTimerRunning = false;
+            startTimerBtn.textContent = 'Start Focus';
+            focusTaskSelect.dataset.runningTaskId = '';
+            try {
+                const response = await fetch(`/api/focus_sessions/${currentSessionId}/stop`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const result = await response.json();
+                if (response.ok) showToast('Focus session stopped!', 'success');
+                else showToast(result.message, 'error');
+            } catch (error) {
+                showToast('Could not stop the session.', 'error');
+            } finally {
+                timeRemaining = 25 * 60;
+                timerDisplay.textContent = formatTime(timeRemaining);
+                currentSessionId = null;
+            }
+        }
+
+        function updateTimer() {
+            timeRemaining--;
+            timerDisplay.textContent = formatTime(timeRemaining);
+            if (timeRemaining <= 0) {
+                stopTimer();
+                alert("Time's up! Take a short break.");
+            }
+        }
+
+        // --- AI CHAT FUNCTIONS ---
+        function setupChat(projects) {
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            const chatBox = document.getElementById('chat-box');
+
+            // No dropdown to set up, so we just enable the chat controls
+            chatInput.disabled = false;
+            chatSendBtn.disabled = false;
+            chatBox.innerHTML = '<div class="chat-message ai">Hello! How can I help you plan your projects today?</div>';
+        }
+
+        async function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+
+            // We no longer get projectId from a dropdown
+            if (!message) return;
+
+            appendMessage(message, 'user');
+            input.value = '';
+            appendMessage("...", 'typing');
+
+            try {
+                const response = await fetch('/api/roadmap/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    // We are not sending a project_id anymore
+                    body: JSON.stringify({ message: message }),
+                });
+                const result = await response.json();
+                document.getElementById('typing-indicator').remove();
+
+                if (response.ok && result.success) {
+                    appendMessage(result.reply, 'ai');
+                    if (result.action_taken === 'reload') {
+                        showToast('Your projects have been updated!', 'success');
+                        loadRoadmapData(); // Reload roadmap data to reflect changes
                     }
-                } catch (error) {
-                    showToast('Could not start the session.', 'error');
+                } else {
+                    appendMessage(result.message || 'An error occurred.', 'ai');
                 }
+            } catch (error) {
+                document.getElementById('typing-indicator').remove();
+                appendMessage('Network error. Please try again.', 'ai');
+            }
+        }
+
+        function appendMessage(message, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            let senderClass = '';
+            if (sender === 'user') senderClass = 'text-right text-blue-800';
+            else if (sender === 'ai') senderClass = 'text-left text-gray-800';
+            else senderClass = 'text-left text-red-600';
+            messageDiv.className = `my-2 ${senderClass}`;
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- PDF EXPORT ---
+        function exportRoadmapToPDF() {
+            if (!window.jspdf || !allProjects || allProjects.length === 0) {
+                return showToast('No project data to export.', 'error');
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(20);
+            doc.text("Planora Project Roadmaps", 14, 22);
+            doc.setFontSize(10);
+            doc.text(`Report Generated: ${new Date().toLocaleDateString()}`, 14, 30);
+            let y = 40;
+
+            allProjects.forEach(project => {
+                if (y > 250) { doc.addPage(); y = 20; }
+                doc.setFontSize(16);
+                doc.text(project.name, 14, y);
+                y += 8;
+                const desc = doc.splitTextToSize(project.description || 'No description.', 180);
+                doc.text(desc, 14, y);
+                y += (desc.length * 5) + 5;
+
+                const head = [['Task Title', 'Status', 'Due Date']];
+                const body = project.tasks.map(t => [t.title, t.status, t.due_date ? new Date(t.due_date).toLocaleDateString() : 'N/A']);
+
+                doc.autoTable({
+                    head: head,
+                    body: body,
+                    startY: y,
+                    theme: 'grid',
+                    headStyles: { fillColor: [44, 62, 80] }
+                });
+                y = doc.lastAutoTable.finalY + 15;
+            });
+            doc.save('Planora_Roadmaps.pdf');
+            showToast('PDF generated successfully!', 'success');
+        }
+
+        // --- OTHER UTILITY & CRUD FUNCTIONS ---
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast-notification');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => { toast.className = toast.className.replace('show', '') }, 3000);
+        }
+
+        async function createProjectWithAI(e) {
+            e.preventDefault();
+            const goal = document.getElementById('project-goal').value;
+            const generateBtn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('generate-btn-text');
+            const spinner = document.getElementById('generate-spinner');
+
+            if (!goal) {
+                showToast('Please describe your goal.', 'error');
+                return;
             }
 
-            async function stopTimer() {
-                if (!isTimerRunning) return;
-                clearInterval(timer);
-                isTimerRunning = false;
-                startTimerBtn.textContent = 'Start Focus';
-                focusTaskSelect.dataset.runningTaskId = '';
-                try {
-                    const response = await fetch(`/api/focus_sessions/${currentSessionId}/stop`, {
-                        method: 'POST',
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    const result = await response.json();
-                    if (response.ok) showToast('Focus session stopped!', 'success');
-                    else showToast(result.message, 'error');
-                } catch (error) {
-                    showToast('Could not stop the session.', 'error');
-                } finally {
-                    timeRemaining = 25 * 60;
-                    timerDisplay.textContent = formatTime(timeRemaining);
-                    currentSessionId = null;
+            generateBtn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline';
+
+            try {
+                const response = await fetch('/api/ai/generate-project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ goal: goal }),
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    showToast(result.message, 'success');
+                    document.getElementById('project-modal').style.display = 'none';
+                    loadDashboardData();
+                } else {
+                    showToast(result.message || 'Failed to generate project.', 'error');
                 }
+            } catch (error) {
+                showToast('A network error occurred.', 'error');
+            } finally {
+                generateBtn.disabled = false;
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        }
+
+        async function createTaskManually(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const projectId = document.getElementById('task-project').value;
+            const dueDate = document.getElementById('task-due-date').value;
+
+            if (!title || !projectId) {
+                showToast('Title and project are required.', 'error');
+                return;
             }
 
-            function updateTimer() {
-                timeRemaining--;
-                timerDisplay.textContent = formatTime(timeRemaining);
-                if (timeRemaining <= 0) {
-                    stopTimer();
-                    alert("Time's up! Take a short break.");
-                }
-            }
-
-            // --- AI CHAT FUNCTIONS ---
-            function setupChat(projects) {
-                const projectSelect = document.getElementById('chat-project-select');
-                const chatInput = document.getElementById('chat-input');
-                const chatSendBtn = document.getElementById('chat-send-btn');
-                const chatForm = document.getElementById('chat-form');
-                const chatBox = document.getElementById('chat-box');
-
-                projectSelect.innerHTML = '<option value="">-- Select a Project --</option>';
-                projects.forEach(p => {
-                    projectSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({
+                        title: title,
+                        project_id: projectId,
+                        due_date: dueDate ? new Date(dueDate).toISOString() : null,
+                    }),
                 });
 
-                projectSelect.addEventListener('change', () => {
-                    if (projectSelect.value) {
-                        chatInput.disabled = false;
-                        chatSendBtn.disabled = false;
-                        chatBox.innerHTML = `<div class="text-green-600">Planora AI is ready to discuss '${projectSelect.options[projectSelect.selectedIndex].text}'.</div>`;
-                    } else {
-                        chatInput.disabled = true;
-                        chatSendBtn.disabled = true;
-                        chatBox.innerHTML = '<div class="text-gray-500">Please select a project to begin chatting.</div>';
-                    }
-                });
-            }
+                // Capture the full response from the API
+                const newTaskData = await response.json();
 
-            async function sendMessage(e) {
-                e.preventDefault();
-                const input = document.getElementById('chat-input');
-                const message = input.value.trim();
-                const projectId = document.getElementById('chat-project-select').value || null;
-                if (!message) return;
+                if (response.ok && newTaskData.success) {
+                    showToast('Task created successfully!', 'success');
+                    document.getElementById('task-modal').style.display = 'none';
 
-                appendMessage(message, 'user');
-                input.value = '';
-                const typingIndicator = document.createElement('div');
-                typingIndicator.id = 'typing-indicator';
-                typingIndicator.className = 'text-gray-500 italic';
-                typingIndicator.textContent = 'Planora AI is thinking...';
-                document.getElementById('chat-box').appendChild(typingIndicator);
-
-                try {
-                    const response = await fetch('/api/roadmap/chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                        body: JSON.stringify({ project_id: projectId, message: message }),
-                    });
-                    const result = await response.json();
-                    document.getElementById('typing-indicator').remove();
-                    if (response.ok && result.success) {
-                        appendMessage(result.reply, 'ai');
-                        if (result.action_taken === 'reload') {
-                            showToast('Your projects have been updated!', 'success');
-                            loadDashboardData();
-                            loadRoadmapData();
-                        }
-                    } else {
-                        appendMessage(result.message || 'Sorry, something went wrong.', 'error');
-                    }
-                } catch (error) {
-                    document.getElementById('typing-indicator').remove();
-                    appendMessage('Could not connect to the AI. Please check your connection.', 'error');
-                }
-            }
-
-            function appendMessage(message, sender) {
-                const chatBox = document.getElementById('chat-box');
-                const messageDiv = document.createElement('div');
-                let senderClass = '';
-                if (sender === 'user') senderClass = 'text-right text-blue-800';
-                else if (sender === 'ai') senderClass = 'text-left text-gray-800';
-                else senderClass = 'text-left text-red-600';
-                messageDiv.className = `my-2 ${senderClass}`;
-                messageDiv.textContent = message;
-                chatBox.appendChild(messageDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-
-            // --- PDF EXPORT ---
-            function exportRoadmapToPDF() {
-                if (window.jspdf) {
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF();
-                    const roadmapContainer = document.getElementById('roadmap-container');
-                    let yPosition = 20;
-
-                    doc.setFontSize(22);
-                    doc.text("Project Roadmaps", 10, yPosition);
-                    yPosition += 15;
-
-                    const projects = roadmapContainer.querySelectorAll('.bg-white');
-                    projects.forEach(projectCard => {
-                        if (yPosition > 260) { doc.addPage(); yPosition = 20; }
-                        const projectName = projectCard.querySelector('h2').innerText;
-                        const projectDesc = projectCard.querySelector('p').innerText;
-                        const tasks = projectCard.querySelectorAll('li');
-
-                        doc.setFontSize(16);
-                        doc.setFont(undefined, 'bold');
-                        doc.text(projectName, 15, yPosition);
-                        yPosition += 7;
-
-                        doc.setFontSize(12);
-                        doc.setFont(undefined, 'normal');
-                        const descLines = doc.splitTextToSize(projectDesc, 170);
-                        doc.text(descLines, 15, yPosition);
-                        yPosition += (descLines.length * 5) + 5;
-
-                        tasks.forEach(task => {
-                            if (yPosition > 280) { doc.addPage(); yPosition = 20; }
-                            doc.text(`- ${task.innerText}`, 20, yPosition);
-                            yPosition += 7;
+                    // --- THIS IS THE NEW PART ---
+                    // If the new task has a due date, add it to the calendar right away.
+                    if (newTaskData.data.task.due_date) {
+                        calendar.addEvent({
+                            title: newTaskData.data.task.title,
+                            start: newTaskData.data.task.due_date,
+                            allDay: true
                         });
-                        yPosition += 10;
-                    });
-                    doc.save('Planora_Roadmap.pdf');
+                    }
+
+                    // Refresh the dashboard lists to show the new task
+                    loadDashboardData();
                 } else {
-                    showToast('Could not generate PDF. The PDF library is not available.', 'error');
+                    showToast(newTaskData.message || 'Failed to create task.', 'error');
                 }
+            } catch (error) {
+                showToast('A network error occurred.', 'error');
             }
+        }
 
-            // --- OTHER UTILITY & CRUD FUNCTIONS ---
-            function showToast(message, type = 'success') {
-                const toast = document.getElementById('toast-notification');
-                toast.textContent = message;
-                toast.className = `toast show ${type}`;
-                setTimeout(() => { toast.className = toast.className.replace('show', '') }, 3000);
+        async function completeTask(taskId) {
+            try {
+                const response = await fetch(`/api/tasks/${taskId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ status: 'completed' })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showToast(result.message, 'success');
+                    loadDashboardData();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('A network error occurred.', 'error');
             }
+        }
 
-            async function createProjectWithAI(e) {
-                e.preventDefault();
-                const goal = document.getElementById('project-goal').value;
-                // ... (implementation is the same as before)
-            }
-
-            async function createTaskManually(e) {
-                e.preventDefault();
-                // ... (implementation is the same as before)
-            }
-
-            async function completeTask(taskId) {
+        async function deleteTask(taskId, taskName) {
+            const confirmation = prompt(`To delete this task, please type its name: "${taskName}"`);
+            if (confirmation === taskName) {
                 try {
                     const response = await fetch(`/api/tasks/${taskId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                        body: JSON.stringify({ status: 'completed' })
+                        method: 'DELETE',
+                        headers: { Authorization: `Bearer ${token}` }
                     });
                     const result = await response.json();
                     if (response.ok) {
-                        showToast(result.message, 'success');
+                        showToast('Task deleted successfully!', 'success');
                         loadDashboardData();
                     } else {
                         showToast(result.message, 'error');
@@ -965,25 +1001,53 @@
                     showToast('A network error occurred.', 'error');
                 }
             }
+        }
 
-            async function deleteTask(taskId, taskName) {
-                const confirmation = prompt(`To delete this task, please type its name: "${taskName}"`);
-                if (confirmation === taskName) {
-                    // ... (implementation is the same as before)
+        async function deleteProject(projectId, projectName) {
+            const confirmation = prompt(`To delete this project and all its tasks, please type its name: "${projectName}"`);
+            if (confirmation === projectName) {
+                try {
+                    const response = await fetch(`/api/projects/${projectId}`, {
+                        method: 'DELETE',
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast('Project deleted successfully!', 'success');
+                        loadDashboardData();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('A network error occurred.', 'error');
                 }
             }
+        }
 
-            async function deleteProject(projectId, projectName) {
-                const confirmation = prompt(`To delete this project, please type its name: "${projectName}"`);
-                if (confirmation === projectName) {
-                    // ... (implementation is the same as before)
+        async function saveNotes() {
+            const content = document.getElementById('notes-area').value;
+            const projectId = document.getElementById('notes-project-select').value;
+            if (!projectId) {
+                showToast('Please select a project for the notes.', 'error');
+                return;
+            }
+            try {
+                const response = await fetch('/api/notes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ content: content, project_id: projectId })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Notes saved!', 'success');
+                } else {
+                    showToast(result.message, 'error');
                 }
+            } catch (error) {
+                showToast('A network error occurred.', 'error');
             }
-
-            async function saveNotes() {
-                // ... (implementation is the same as before)
-            }
-        </script>
+        }
+    </script>
 </body>
 
 </html>
